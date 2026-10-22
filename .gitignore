@@ -1,0 +1,36 @@
+# Environment & Secrets
+.env
+.env.local
+*.env
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+
+# Binaries & Portable Packages
+bin/
+*.exe
+*.dll
+
+# Cache & Diagnostics
+.cache/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Output PDFs & Generated Files
+*.pdf
+sample_book*.html
+temp/
+uploads/
+tests/sample_5min_lecture.wav
+tests/sample_5min_lecture.mp3
+
+# IDE & OS Metadata
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

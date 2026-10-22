@@ -1,0 +1,445 @@
+{
+  "title": "Thermodynamics & Heat Engines: Energy, Entropy, and Power Cycles",
+  "subject": "Applied Thermodynamics & Mechanical Engineering",
+  "summary": "This lecture presents a rigorous exposition of classical engineering thermodynamics. We investigate the First and Second Laws of Thermodynamics, differentiate between state properties and path-dependent interactions, analyze reversible cyclic processes, and derive maximum theoretical limits on energy conversion efficiency. Detailed step-by-step numerical solutions demonstrate practical thermodynamic cycle calculations, complemented by an exhaustive examination question bank.",
+  "source": "Sample University — Sample Lecturer",
+  "date": "October 22, 2026",
+  "duration_str": "55 minutes",
+  "theme": "indigo",
+  "is_demo": false,
+  "concepts_and_definitions": [
+    {
+      "id": "concept-1",
+      "title": "Thermodynamic Systems, Surroundings, and State Variables",
+      "definition": "A thermodynamic system is a specified quantity of matter or region in space chosen for analysis. The system boundary separates it from the surroundings.",
+      "explanation": "Systems are classified as closed (control mass, where energy passes through boundaries but mass does not), open (control volume, where both mass and energy cross boundaries), or isolated (neither mass nor energy crosses boundaries). A system state is uniquely identified by intensive properties (pressure $P$, temperature $T$, specific volume $v$) and extensive properties (total volume $V$, internal energy $U$, enthalpy $H$).",
+      "key_points": [
+        "Intensive properties are independent of system mass; extensive properties scale proportionally with mass.",
+        "The state postulate dictates that the thermodynamic state of a simple compressible system is completely specified by two independent, intensive properties.",
+        "Thermodynamic equilibrium requires thermal, mechanical, phase, and chemical equilibrium simultaneously."
+      ],
+      "latex": "v = \\frac{V}{m}, \\quad u = \\frac{U}{m}, \\quad h = u + P v",
+      "callout": {
+        "type": "tip",
+        "title": "State Postulate in Practice",
+        "text": "For a pure substance such as water or air, specifying any two independent intensive properties (e.g., $P$ and $T$ in a single-phase region) fixes all other thermodynamic properties."
+      }
+    },
+    {
+      "id": "concept-2",
+      "title": "Path Independence and Exact vs. Inexact Differentials",
+      "definition": "A state function depends exclusively on the current equilibrium state of the system, whereas a path function depends explicitly on the process trajectory.",
+      "explanation": "Properties such as pressure, temperature, volume, internal energy, and entropy are state functions; their changes over any cyclic process vanish identically: $\\oint dU = 0$. In contrast, heat interaction $Q$ and work interaction $W$ are path functions represented mathematically by inexact differentials ($\\delta Q$, $\\delta W$).",
+      "key_points": [
+        "Exact differentials satisfy Euler's reciprocity condition: $\\frac{\\partial^2 f}{\\partial x \\partial y} = \\frac{\\partial^2 f}{\\partial y \\partial x}$.",
+        "Cyclic integral of any state property is strictly zero: $\\oint d\\phi = 0$.",
+        "Work done during expansion depends on the transition path and is represented as the area under the process curve on a $P-V$ diagram."
+      ],
+      "latex": "\\Delta U = \\int_1^2 dU = U_2 - U_1, \\quad W_{12} = \\int_1^2 \\delta W \\neq W_2 - W_1",
+      "callout": {
+        "type": "warning",
+        "title": "Common Misconception",
+        "text": "Never write $\\Delta W$ or $\\Delta Q$. A system contains internal energy $U$, but does NOT 'contain' work or heat. Heat and work exist solely during a process as boundary interactions."
+      }
+    },
+    {
+      "id": "concept-3",
+      "title": "The First Law of Thermodynamics and Conservation of Energy",
+      "definition": "Energy can neither be created nor destroyed; during an interaction, it can only change from one form into another.",
+      "explanation": "For a closed stationary system undergoing a change of state between state 1 and state 2, the net heat added to the system minus the net work performed by the system equals the net change in total internal energy. For an ideal gas with constant specific heats, internal energy change depends solely on temperature: $\\Delta U = m C_v \\Delta T$.",
+      "key_points": [
+        "Differential statement: $dU = \\delta Q - \\delta W$.",
+        "For an isolated system, $Q = 0$ and $W = 0$, leading directly to $U = \\text{constant}$.",
+        "Enthalpy combines internal energy and flow work: $H = U + PV$ with $dH = \\delta Q + V dP$ for reversible processes."
+      ],
+      "latex": "\\Delta U = Q - W, \\quad \\Delta H = m C_p \\Delta T",
+      "callout": {
+        "type": "important",
+        "title": "Sign Convention Alert",
+        "text": "Standard mechanical engineering convention: Heat transferred TO the system is positive ($Q > 0$); Work performed BY the system on surroundings is positive ($W > 0$)."
+      }
+    },
+    {
+      "id": "concept-4",
+      "title": "Quasi-Static Boundary Work and Polytropic Transitions",
+      "definition": "Boundary work is the mechanical energy transferred across a moving system boundary during expansion or compression under quasi-equilibrium conditions.",
+      "explanation": "When a gas expands quasi-statically against a movable piston, the boundary work is computed by integrating pressure over volume change. In polytropic processes ($P V^n = \\text{constant}$), the exponent $n$ characterizes the physical nature of the process: isobaric ($n=0$), isothermal ($n=1$), isentropic ($n=\\gamma$), and isochoric ($n=\\infty$).",
+      "key_points": [
+        "Isochoric ($V = \\text{const}$): $W = 0$, so $Q = \\Delta U$.",
+        "Isobaric ($P = \\text{const}$): $W = P(V_2 - V_1)$, so $Q = \\Delta H$.",
+        "Isothermal ideal gas ($T = \\text{const}$): $W = n R T \\ln\\left(\\frac{V_2}{V_1}\\right)$, so $Q = W$."
+      ],
+      "latex": "W = \\int_{V_1}^{V_2} P \\, dV = \\frac{P_2 V_2 - P_1 V_1}{1 - n} \\quad (n \\neq 1)",
+      "callout": {
+        "type": "tip",
+        "title": "Isothermal vs. Polytropic Exponents",
+        "text": "When $n=1$, the polytropic work formula has a zero denominator. For $n=1$ (isothermal ideal gas), always use the logarithmic formulation: $W = P_1 V_1 \\ln(V_2 / V_1)$."
+      }
+    },
+    {
+      "id": "concept-5",
+      "title": "The Second Law of Thermodynamics and the Carnot Theorem",
+      "definition": "The Second Law dictates the directionality of spontaneous natural processes and establishes fundamental limits on heat-to-work conversion.",
+      "explanation": "The Kelvin-Planck statement asserts that it is impossible for any device operating on a cycle to receive heat from a single thermal reservoir and produce a net amount of work. The Clausius statement establishes that heat cannot spontaneously flow from a cooler body to a hotter body without external work input. Nicolas Léonard Sadi Carnot demonstrated that no heat engine operating between two thermal reservoirs can be more efficient than a completely reversible engine.",
+      "key_points": [
+        "Carnot cycle consists of 4 reversible operations: 2 isothermal and 2 adiabatic.",
+        "Thermal efficiency depends exclusively on the absolute temperatures of the heat reservoirs: $\\eta_{Carnot} = 1 - \\frac{T_C}{T_H}$.",
+        "All reversible engines operating between the same two temperatures achieve identical thermal efficiency."
+      ],
+      "latex": "\\eta_{Carnot} = 1 - \\frac{T_C}{T_H} = \\frac{W_{net}}{Q_H}",
+      "callout": {
+        "type": "important",
+        "title": "Absolute Temperature Requirement",
+        "text": "Always convert reservoir temperatures to absolute Kelvin units before calculating Carnot efficiency ($T_K = T_{^\\circ C} + 273.15$)."
+      }
+    },
+    {
+      "id": "concept-6",
+      "title": "Entropy, the Clausius Inequality, and Irreversibility",
+      "definition": "Entropy $S$ is a quantitative measure of microscopic disorder, multi-state dispersion, and the degree of irreversibility in a physical process.",
+      "explanation": "For any thermodynamic cycle, the Clausius inequality states that $\\oint \\frac{\\delta Q}{T} \\leq 0$, where equality holds strictly for internally reversible cycles. For any irreversible process, entropy is generated within system boundaries ($S_{gen} > 0$). In an isolated system (the universe), total entropy must increase for all real processes, reaching its maximum at equilibrium.",
+      "key_points": [
+        "Differential definition: $dS = \\frac{\\delta Q_{rev}}{T}$.",
+        "Entropy balance for closed system: $\\Delta S = \\int \\frac{\\delta Q}{T} + S_{gen}$, where $S_{gen} \\geq 0$.",
+        "Isentropic processes are both internally reversible and adiabatic: $S_2 = S_1$."
+      ],
+      "latex": "dS = \\frac{\\delta Q_{rev}}{T}, \\quad \\Delta S_{univ} = \\Delta S_{sys} + \\Delta S_{surr} \\geq 0",
+      "callout": {
+        "type": "tip",
+        "title": "Isentropic Efficiency",
+        "text": "Real turbines, compressors, and pumps always generate entropy due to fluid friction and throttling, resulting in isentropic efficiencies strictly less than 100%."
+      }
+    }
+  ],
+  "examples": [
+    {
+      "id": "ex-1",
+      "title": "Reversible Isothermal Expansion of an Ideal Gas",
+      "context": "Consider $1.5 \\text{ moles}$ of an ideal gas maintained at a constant temperature of $T = 350 \\text{ K}$ inside a cylinder fitted with a frictionless piston. The gas expands reversibly from an initial volume of $V_1 = 0.015 \\text{ m}^3$ to a final volume of $V_2 = 0.045 \\text{ m}^3$.",
+      "steps": [
+        "Because temperature is held constant and the gas is ideal, internal energy change is zero: $\\Delta U = n C_v \\Delta T = 0$.",
+        "Applying the First Law: $Q = \\Delta U + W = W$. All heat absorbed from the thermal bath is directly converted into boundary work.",
+        "Calculate boundary work: $W = n R T \\ln\\left(\\frac{V_2}{V_1}\\right) = (1.5)(8.314)(350) \\ln\\left(\\frac{0.045}{0.015}\\right) = 4364.85 \\times 1.0986 = 4795.3 \\text{ J}$.",
+        "Calculate heat input: $Q = 4.795 \\text{ kJ}$. Entropy change of the gas is $\\Delta S_{sys} = \\frac{Q}{T} = \\frac{4795.3}{350} = +13.70 \\text{ J/K}$."
+      ],
+      "takeaway": "In reversible isothermal expansion of an ideal gas, all incoming heat is converted into boundary work without altering internal energy, while entropy increases due to spatial volume expansion."
+    },
+    {
+      "id": "ex-2",
+      "title": "Adiabatic Free Expansion into an Evacuated Chamber (Joule Expansion)",
+      "context": "An insulated rigid container is divided into two equal compartments by a thin membrane. Compartment A contains an ideal gas at pressure $P_1$ and temperature $T_1$, while Compartment B is evacuated ($P = 0$). The membrane ruptures suddenly, and the gas expands freely to fill the entire container.",
+      "steps": [
+        "Because the outer container walls are rigid and stationary, boundary work is strictly zero: $W = 0$.",
+        "Because the container is completely insulated from the environment, heat transfer is zero: $Q = 0$.",
+        "Applying the First Law: $\\Delta U = Q - W = 0 - 0 = 0$.",
+        "For an ideal gas, internal energy depends solely on temperature; therefore, the final equilibrium temperature equals initial temperature: $T_2 = T_1$.",
+        "Although $Q = 0$ and $\\Delta U = 0$, the process is violently irreversible. Entropy generation is strictly positive: $S_{gen} = \\Delta S_{sys} = n R \\ln\\left(\\frac{V_2}{V_1}\\right) = n R \\ln(2) > 0$."
+      ],
+      "takeaway": "Free expansion demonstrates that an adiabatic process is not necessarily isentropic. When irreversibilities occur without heat transfer, entropy increases through internal generation ($S_{gen} > 0$)."
+    }
+  ],
+  "numericals": [
+    {
+      "id": "num-1",
+      "title": "Carnot Heat Engine Performance and Waste Heat Rejection",
+      "is_long": false,
+      "problem": "A stationary heat engine operates on a reversible Carnot power cycle between a high-temperature geothermal source at $T_H = 450^\\circ \\text{C}$ and a river cooling sink at $T_C = 20^\\circ \\text{C}$. The engine delivers a steady net power output of $\\dot{W}_{net} = 120 \\text{ kW}$. Determine: (a) The theoretical thermal efficiency $\\eta_{th}$, (b) The rate of heat input $\\dot{Q}_H$ required from the geothermal source, and (c) The rate of waste heat rejection $\\dot{Q}_C$ discharged into the river.",
+      "given": {
+        "High-temperature reservoir (T_H)": "450 °C = 723.15 K",
+        "Cold-temperature sink (T_C)": "20 °C = 293.15 K",
+        "Net power output (W_net)": "120 kW = 120 kJ/s"
+      },
+      "find": "Thermal efficiency (\\eta_{th}), Heat input rate (\\dot{Q}_H), and Heat rejection rate (\\dot{Q}_C)",
+      "formulas_used": [
+        "\\eta_{th} = 1 - \\frac{T_C}{T_H}",
+        "\\dot{Q}_H = \\frac{\\dot{W}_{net}}{\\eta_{th}}",
+        "\\dot{Q}_C = \\dot{Q}_H - \\dot{W}_{net}"
+      ],
+      "solution_steps": [
+        {
+          "step_num": 1,
+          "title": "Temperature Conversion to Absolute Kelvin",
+          "description": "Convert Celsius temperatures to thermodynamic Kelvin scale.",
+          "math": "T_H = 450 + 273.15 = 723.15 \\text{ K}, \\quad T_C = 20 + 273.15 = 293.15 \\text{ K}"
+        },
+        {
+          "step_num": 2,
+          "title": "Compute Maximum Carnot Thermal Efficiency",
+          "description": "Apply the Carnot efficiency formula using absolute temperatures.",
+          "math": "\\eta_{th} = 1 - \\frac{293.15}{723.15} = 1 - 0.40537 = 0.59463 \\quad (59.46\\%)"
+        },
+        {
+          "step_num": 3,
+          "title": "Compute Required Geothermal Heat Input Rate",
+          "description": "Calculate heat absorption rate based on net power produced and efficiency.",
+          "math": "\\dot{Q}_H = \\frac{\\dot{W}_{net}}{\\eta_{th}} = \\frac{120 \\text{ kW}}{0.59463} = 201.81 \\text{ kW}"
+        },
+        {
+          "step_num": 4,
+          "title": "Calculate Waste Heat Rejection Rate",
+          "description": "Apply conservation of energy to determine heat dismissed into cooling sink.",
+          "math": "\\dot{Q}_C = \\dot{Q}_H - \\dot{W}_{net} = 201.81 - 120.00 = 81.81 \\text{ kW}"
+        }
+      ],
+      "final_answer": "Thermal Efficiency = 59.46%; Heat Input Rate = 201.81 kW; Waste Heat Discharge = 81.81 kW."
+    },
+    {
+      "id": "num-2",
+      "title": "Two-Stage Gas Compression with Intercooling and Power Optimization",
+      "is_long": true,
+      "problem": "Air enters a two-stage compressor with intercooling at state 1 where $P_1 = 100 \\text{ kPa}$ and $T_1 = 300 \\text{ K}$ at a steady mass flow rate of $\\dot{m} = 0.75 \\text{ kg/s}$. The air is compressed isentropically in the first stage to an intermediate pressure $P_i$, cooled back to $T_3 = 300 \\text{ K}$ in an intercooler at constant pressure, and subsequently compressed isentropically in the second stage to an exit pressure $P_2 = 1600 \\text{ kPa}$. Assume ideal gas behavior with $C_p = 1.005 \\text{ kJ/(kg}\\cdot\\text{K)}$ and $\\gamma = 1.40$. Compute: (a) Optimum intermediate pressure $P_i$ for minimum compressor work, (b) Exit temperature from each stage, (c) Work input required for stage 1 and stage 2, (d) Heat removed in the intercooler, and (e) Percentage reduction in total compressor power compared to single-stage compression.",
+      "given": {
+        "Inlet pressure (P_1)": "100 kPa",
+        "Inlet temperature (T_1)": "300 K",
+        "Final delivery pressure (P_2)": "1600 kPa",
+        "Intercooler exit temperature (T_3)": "300 K",
+        "Mass flow rate (m_dot)": "0.75 kg/s",
+        "Specific heat capacity (C_p)": "1.005 kJ/(kg·K)",
+        "Specific heat ratio (gamma)": "1.40"
+      },
+      "find": "Optimum intermediate pressure (P_i), intermediate temperatures (T_2, T_4), stage power inputs, intercooler heat rejection (Q_dot_ic), and total power savings.",
+      "formulas_used": [
+        "P_i = \\sqrt{P_1 \\cdot P_2}",
+        "T_2 = T_1 \\left(\\frac{P_i}{P_1}\\right)^{\\frac{\\gamma - 1}{\\gamma}}",
+        "\\dot{W}_{comp} = \\dot{m} C_p (T_{exit} - T_{inlet})",
+        "\\dot{Q}_{intercooler} = \\dot{m} C_p (T_2 - T_3)"
+      ],
+      "solution_steps": [
+        {
+          "step_num": 1,
+          "title": "Determine Optimum Intermediate Pressure",
+          "description": "For minimum total work in a two-stage compressor with complete intercooling ($T_3 = T_1$), the intermediate pressure is the geometric mean of inlet and delivery pressures.",
+          "math": "P_i = \\sqrt{P_1 P_2} = \\sqrt{100 \\times 1600} = \\sqrt{160000} = 400.00 \\text{ kPa}"
+        },
+        {
+          "step_num": 2,
+          "title": "Evaluate Stage Pressure Ratios and Exit Temperature for Stage 1",
+          "description": "Calculate pressure ratio $r_p = P_i / P_1 = 400 / 100 = 4.0$. Calculate stage 1 discharge temperature using isentropic relation with $\\frac{\\gamma - 1}{\\gamma} = \\frac{0.4}{1.4} = 0.2857$.",
+          "math": "T_2 = 300 \\cdot (4.0)^{0.2857} = 300 \\cdot 1.4860 = 445.80 \\text{ K}"
+        },
+        {
+          "step_num": 3,
+          "title": "Evaluate Exit Temperature for Stage 2",
+          "description": "The pressure ratio for stage 2 is $P_2 / P_i = 1600 / 400 = 4.0$. Because $T_3 = 300 \\text{ K}$, stage 2 discharge temperature is identical to stage 1.",
+          "math": "T_4 = T_3 \\cdot (4.0)^{0.2857} = 300 \\cdot 1.4860 = 445.80 \\text{ K}"
+        },
+        {
+          "step_num": 4,
+          "title": "Calculate Power Consumption for Stage 1 and Stage 2",
+          "description": "Compute power input required by each compressor stage using steady-flow energy equation.",
+          "math": "\\dot{W}_1 = \\dot{m} C_p (T_2 - T_1) = (0.75)(1.005)(445.80 - 300) = (0.75375)(145.80) = 109.89 \\text{ kW}\\\\ \\dot{W}_2 = \\dot{W}_1 = 109.89 \\text{ kW} \\implies \\dot{W}_{total,2\\text{-stage}} = 109.89 + 109.89 = 219.78 \\text{ kW}"
+        },
+        {
+          "step_num": 5,
+          "title": "Calculate Heat Rejection Rate in the Intercooler",
+          "description": "The intercooler cools compressed air at constant intermediate pressure $P_i = 400 \\text{ kPa}$ from $T_2$ back to $T_3 = 300 \\text{ K}$.",
+          "math": "\\dot{Q}_{intercooler} = \\dot{m} C_p (T_2 - T_3) = (0.75)(1.005)(445.80 - 300) = 109.89 \\text{ kW}"
+        },
+        {
+          "step_num": 6,
+          "title": "Compare Against Single-Stage Compression and Determine Power Savings",
+          "description": "For a single-stage compressor operating over pressure ratio $1600 / 100 = 16.0$:",
+          "math": "T_{exit,1\\text{-stage}} = 300 \\cdot (16.0)^{0.2857} = 300 \\cdot 2.2082 = 662.46 \\text{ K}\\\\ \\dot{W}_{1\\text{-stage}} = (0.75)(1.005)(662.46 - 300) = (0.75375)(362.46) = 273.20 \\text{ kW}\\\\ \\Delta \\dot{W} = 273.20 - 219.78 = 53.42 \\text{ kW} \\implies \\% \\text{ Savings} = \\frac{53.42}{273.20} \\times 100 = 19.55\\%"
+        }
+      ],
+      "final_answer": "Optimum Interstage Pressure = 400.0 kPa; Stage Discharge Temperature = 445.8 K; Two-Stage Power Input = 219.78 kW; Intercooler Heat Rejection = 109.89 kW; Energy Savings vs. Single-Stage = 19.55% (53.42 kW saved)."
+    },
+    {
+      "id": "num-3",
+      "title": "Polytropic Expansion and Work Output of Superheated Steam",
+      "is_long": false,
+      "problem": "A closed cylinder containing $0.20 \\text{ kg}$ of gas expands according to a polytropic law $P V^{1.30} = \\text{constant}$. Initial state: $P_1 = 1200 \\text{ kPa}$ and $V_1 = 0.040 \\text{ m}^3$. Final pressure drops to $P_2 = 250 \\text{ kPa}$. Determine: (a) The final volume $V_2$, (b) The boundary work $W$ performed during expansion, and (c) The net heat transfer $Q$ assuming gas internal energy decreases by $\\Delta U = -48.5 \\text{ kJ}$.",
+      "given": {
+        "Initial pressure (P_1)": "1200 kPa = 1.20 MPa",
+        "Initial volume (V_1)": "0.040 m³",
+        "Final pressure (P_2)": "250 kPa = 0.25 MPa",
+        "Polytropic index (n)": "1.30",
+        "Internal energy change (Delta U)": "-48.5 kJ"
+      },
+      "find": "Final volume (V_2), Expansion work (W), and Net heat transfer (Q)",
+      "formulas_used": [
+        "V_2 = V_1 \\left(\\frac{P_1}{P_2}\\right)^{\\frac{1}{n}}",
+        "W = \\frac{P_2 V_2 - P_1 V_1}{1 - n}",
+        "Q = \\Delta U + W"
+      ],
+      "solution_steps": [
+        {
+          "step_num": 1,
+          "title": "Calculate Final Volume V2",
+          "description": "Rearrange polytropic relation $P_1 V_1^n = P_2 V_2^n$ to solve for $V_2$.",
+          "math": "V_2 = 0.040 \\cdot \\left(\\frac{1200}{250}\\right)^{\\frac{1}{1.30}} = 0.040 \\cdot (4.80)^{0.7692} = 0.040 \\cdot 3.3444 = 0.1338 \\text{ m}^3"
+        },
+        {
+          "step_num": 2,
+          "title": "Evaluate Boundary Expansion Work",
+          "description": "Integrate boundary work for polytropic index $n = 1.30$.",
+          "math": "W = \\frac{(250 \\times 0.1338) - (1200 \\times 0.040)}{1 - 1.30} = \\frac{33.45 - 48.00}{-0.30} = \\frac{-14.55}{-0.30} = +48.50 \\text{ kJ}"
+        },
+        {
+          "step_num": 3,
+          "title": "Evaluate Net Heat Transfer Using First Law",
+          "description": "Apply First Law of Thermodynamics balance: $Q = \\Delta U + W$.",
+          "math": "Q = -48.50 \\text{ kJ} + 48.50 \\text{ kJ} = 0.00 \\text{ kJ}"
+        }
+      ],
+      "final_answer": "Final Volume = 0.1338 m³; Boundary Work = +48.50 kJ; Net Heat Transfer = 0.00 kJ (adiabatic polytropic path)."
+    }
+  ],
+  "summary": "Classical thermodynamics provides foundational conservation principles and absolute efficiency constraints governing energy transformation. The First Law establishes internal energy as a state property and guarantees overall energy conservation across boundary heat and work interactions. The Second Law demonstrates that macroscopic entropy increases in all natural processes, establishing the reversible Carnot cycle as the theoretical upper ceiling for thermal power generation. Polytropic models accurately predict expansion work in real machinery, and multi-stage compression with intercooling reduces parasitic compressor power consumption significantly.",
+  "formula_sheet": [
+    {
+      "name": "First Law of Thermodynamics",
+      "latex": "\\Delta U = Q - W",
+      "description": "Conservation of energy in closed systems; internal energy change equals net heat added minus work done.",
+      "units": "Joules (J) or kJ"
+    },
+    {
+      "name": "Quasi-Static Boundary Work",
+      "latex": "W = \\int_{V_1}^{V_2} P \\, dV",
+      "description": "Mechanical work transferred during volume expansion against opposing boundary pressure.",
+      "units": "Joules (J)"
+    },
+    {
+      "name": "Ideal Gas State Equation",
+      "latex": "P V = n R T = m R_{spec} T",
+      "description": "Equation of state relating macroscopic thermodynamic properties for low-density gases.",
+      "units": "P [Pa], V [m³], T [K]"
+    },
+    {
+      "name": "Carnot Cycle Thermal Efficiency",
+      "latex": "\\eta_{\\text{Carnot}} = 1 - \\frac{T_C}{T_H}",
+      "description": "Theoretical upper ceiling on efficiency for heat engines operating between hot and cold reservoirs.",
+      "units": "Dimensionless ratio"
+    },
+    {
+      "name": "Root-Mean-Square Molecular Speed",
+      "latex": "v_{\\text{rms}} = \\sqrt{\\frac{3 k_B T}{m}}",
+      "description": "Statistical average molecular speed derived from kinetic theory of gases.",
+      "units": "m/s"
+    },
+    {
+      "name": "Polytropic Boundary Work",
+      "latex": "W = \\frac{P_2 V_2 - P_1 V_1}{1 - n} \\quad (n \\neq 1)",
+      "description": "Boundary expansion work during polytropic transition following PV^n = const.",
+      "units": "kJ"
+    },
+    {
+      "name": "Entropy Difference for Ideal Gas",
+      "latex": "\\Delta S = n C_v \\ln\\left(\\frac{T_2}{T_1}\\right) + n R \\ln\\left(\\frac{V_2}{V_1}\\right)",
+      "description": "Exact entropy change between two equilibrium states in an ideal gas.",
+      "units": "J/K"
+    },
+    {
+      "name": "Clausius Inequality for Arbitrary Cycles",
+      "latex": "\\oint \\frac{\\delta Q}{T} \\leq 0",
+      "description": "Cyclic integral of heat transfer over absolute boundary temperature for reversible and irreversible cycles.",
+      "units": "J/K"
+    }
+  ],
+  "questions": [
+    {
+      "id": "q-1",
+      "number": 1,
+      "difficulty": "Easy",
+      "type": "Theory",
+      "question": "Explain the fundamental distinction between a state function and a path function, giving two distinct physical examples of each.",
+      "answer": "A state function depends exclusively on the current equilibrium state of the system and is independent of the past history or trajectory taken to reach that state (e.g., Temperature $T$, Pressure $P$, Internal Energy $U$, Entropy $S$). In contrast, a path function depends explicitly on the specific trajectory and transition mechanism followed between initial and final states (e.g., Heat $Q$ and Work $W$)."
+    },
+    {
+      "id": "q-2",
+      "number": 2,
+      "difficulty": "Easy",
+      "type": "Numerical",
+      "question": "A closed system undergoes a process where it performs $35.0 \\text{ kJ}$ of boundary work while its internal energy increases by $15.0 \\text{ kJ}$. Calculate the net heat transferred to the system.",
+      "answer": "Applying the First Law of Thermodynamics: $Q = \\Delta U + W$. Substituting the given values: $Q = 15.0 \\text{ kJ} + 35.0 \\text{ kJ} = +50.0 \\text{ kJ}$. The positive sign indicates that 50.0 kJ of thermal energy was absorbed by the system from the surroundings."
+    },
+    {
+      "id": "q-3",
+      "number": 3,
+      "difficulty": "Easy",
+      "type": "Theory",
+      "question": "State the Kelvin-Planck and Clausius formulations of the Second Law of Thermodynamics and explain their conceptual equivalence.",
+      "answer": "The Kelvin-Planck statement asserts that no cyclical heat engine can convert 100% of absorbed heat into net work output without rejecting heat to a cooler reservoir. The Clausius statement asserts that heat cannot spontaneously transfer from a cooler body to a hotter body without external work input. Violation of either statement immediately permits violation of the other through a coupled Carnot refrigeration-power cycle."
+    },
+    {
+      "id": "q-4",
+      "number": 4,
+      "difficulty": "Easy",
+      "type": "Numerical",
+      "question": "An ideal gas expands isobarically at a constant pressure of $P = 200 \\text{ kPa}$ from an initial volume of $0.050 \\text{ m}^3$ to a final volume of $0.120 \\text{ m}^3$. Calculate the expansion boundary work performed by the gas.",
+      "answer": "For an isobaric (constant pressure) process, boundary work is $W = P(V_2 - V_1) = 200 \\times 10^3 \\text{ Pa} \\times (0.120 - 0.050) \\text{ m}^3 = 200 \\times 10^3 \\times 0.070 = 14,000 \\text{ J} = 14.0 \\text{ kJ}$."
+    },
+    {
+      "id": "q-5",
+      "number": 5,
+      "difficulty": "Moderate",
+      "type": "Theory",
+      "question": "Why is it thermodynamically impossible for any cyclic heat engine to achieve a thermal efficiency of 100%, even in the absence of all friction and mechanical losses?",
+      "answer": "Even with zero mechanical friction, a heat engine must operate in a complete thermodynamic cycle returning the working fluid to its initial state. To compress the working fluid back to its initial pressure without consuming equal or greater work than produced during expansion, heat must be rejected to a cold sink at temperature $T_C > 0 \\text{ K}$. By the Carnot theorem, $\\eta = 1 - (T_C / T_H)$, which can equal 1.0 only if $T_C = 0 \\text{ K}$ (Absolute Zero, forbidden by the Third Law) or $T_H = \\infty$."
+    },
+    {
+      "id": "q-6",
+      "number": 6,
+      "difficulty": "Moderate",
+      "type": "Numerical",
+      "question": "A proposed geothermal power plant claims to produce $45 \\text{ MW}$ of electric power while rejecting $65 \\text{ MW}$ of waste heat to a river at $15^\\circ \\text{C}$. The geothermal reservoir temperature is $180^\\circ \\text{C}$. Determine whether this claim violates the Second Law of Thermodynamics.",
+      "answer": "Total heat input rate: $\\dot{Q}_H = \\dot{W} + \\dot{Q}_C = 45 + 65 = 110 \\text{ MW}$. Claimed efficiency: $\\eta_{claimed} = 45 / 110 = 40.91\\%$. Convert temperatures to Kelvin: $T_H = 180 + 273.15 = 453.15 \\text{ K}$, $T_C = 15 + 273.15 = 288.15 \\text{ K}$. Theoretical maximum Carnot efficiency: $\\eta_{max} = 1 - (288.15 / 453.15) = 1 - 0.6359 = 36.41\\%$. Because the claimed efficiency ($40.91\\%$) exceeds the theoretical Carnot limit ($36.41\\%$), the claim violates the Second Law and is physically impossible."
+    },
+    {
+      "id": "q-7",
+      "number": 7,
+      "difficulty": "Moderate",
+      "type": "Theory",
+      "question": "Define the concept of entropy generation ($S_{gen}$) and explain why it is always non-negative ($S_{gen} \\geq 0$) for any real physical process.",
+      "answer": "Entropy generation ($S_{gen}$) accounts for entropy created within system boundaries due to internal irreversibilities such as friction, unrestrained expansion, chemical reaction, mixing of substances, and heat transfer across a finite temperature gradient. While entropy can transfer across boundaries in either direction via heat flow, the second law of thermodynamics requires that internal generation is strictly positive for irreversible processes ($S_{gen} > 0$) and zero for ideal reversible processes ($S_{gen} = 0$). Negative entropy generation would imply spontaneous creation of available work from uniform equilibrium."
+    },
+    {
+      "id": "q-8",
+      "number": 8,
+      "difficulty": "Moderate",
+      "type": "Numerical",
+      "question": "Carbon dioxide gas ($m = 0.50 \\text{ kg}$) is compressed in a piston-cylinder device polytropically with $n = 1.25$ from $P_1 = 100 \\text{ kPa}$, $T_1 = 300 \\text{ K}$ to $P_2 = 800 \\text{ kPa}$. Using gas constant $R = 0.1889 \\text{ kJ/(kg}\\cdot\\text{K)}$, compute the work required during compression.",
+      "answer": "Compute final temperature: $T_2 = T_1 (P_2 / P_1)^{(n-1)/n} = 300 \\cdot (8.0)^{0.25/1.25} = 300 \\cdot (8.0)^{0.20} = 300 \\cdot 1.5157 = 454.71 \\text{ K}$. For an ideal gas polytropic process: $W = \\frac{m R (T_2 - T_1)}{1 - n} = \\frac{(0.50)(0.1889)(454.71 - 300)}{1 - 1.25} = \\frac{(0.09445)(154.71)}{-0.25} = \\frac{14.612}{-0.25} = -58.45 \\text{ kJ}$. The negative sign indicates 58.45 kJ of external mechanical work must be supplied."
+    },
+    {
+      "id": "q-9",
+      "number": 9,
+      "difficulty": "Moderate",
+      "type": "Theory",
+      "question": "Why is the constant-pressure specific heat capacity $C_p$ always strictly greater than constant-volume specific heat capacity $C_v$ for any compressible substance?",
+      "answer": "When heat is added at constant volume ($V = \\text{const}$), no boundary work is done ($W = 0$), and 100% of the supplied thermal energy directly raises internal energy and temperature ($dU = \\delta Q$). When heat is added at constant pressure ($P = \\text{const}$), the substance expands against opposing pressure, performing boundary work ($W = P \\Delta V$). Consequently, additional heat must be supplied at constant pressure both to perform the boundary work and to achieve the same temperature rise. For an ideal gas, Meyer's relation states $C_p - C_v = R > 0$."
+    },
+    {
+      "id": "q-10",
+      "number": 10,
+      "difficulty": "Hard",
+      "type": "Theory",
+      "question": "Starting from the differential Gibbs equation $T dS = dU + P dV$, derive the expressions for entropy change of an ideal gas in terms of (a) $T$ and $V$, and (b) $T$ and $P$.",
+      "answer": "For an ideal gas, $dU = C_v dT$ and $P = R T / v$. Substituting into the Gibbs relation: $T ds = C_v dT + \\left(\\frac{R T}{v}\\right) dv \\implies ds = C_v \\frac{dT}{T} + R \\frac{dv}{v}$. Integrating between states 1 and 2 yields: $s_2 - s_1 = C_v \\ln\\left(\\frac{T_2}{T_1}\\right) + R \\ln\\left(\\frac{v_2}{v_1}\\right)$. Using the enthalpy formulation $T ds = dh - v dP$ with $dh = C_p dT$ and $v = R T / P$: $ds = C_p \\frac{dT}{T} - R \\frac{dP}{P}$. Integrating yields: $s_2 - s_1 = C_p \\ln\\left(\\frac{T_2}{T_1}\\right) - R \\ln\\left(\\frac{P_2}{P_1}\\right)$."
+    },
+    {
+      "id": "q-11",
+      "number": 11,
+      "difficulty": "Hard",
+      "type": "Numerical",
+      "question": "A steady-flow adiabatic steam turbine expands $3.0 \\text{ kg/s}$ of steam from an inlet state of $P_1 = 4.0 \\text{ MPa}$, $T_1 = 400^\\circ \\text{C}$ ($h_1 = 3214.5 \\text{ kJ/kg}$, $s_1 = 6.7714 \\text{ kJ/(kg}\\cdot\\text{K)}$) to an exit condenser pressure of $P_2 = 10 \\text{ kPa}$. The turbine has an isentropic efficiency of $\\eta_t = 88.0\\%$. At $10 \\text{ kPa}$, saturated liquid and vapor properties are $h_f = 191.8 \\text{ kJ/kg}$, $h_{fg} = 2392.1 \\text{ kJ/kg}$, $s_f = 0.6492 \\text{ kJ/(kg}\\cdot\\text{K)}$, and $s_{fg} = 7.4996 \\text{ kJ/(kg}\\cdot\\text{K)}$. Calculate: (a) Ideal isentropic power output, (b) Actual power output, and (c) Rate of entropy generation $\\dot{S}_{gen}$.",
+      "answer": "(a) For isentropic expansion, $s_{2s} = s_1 = 6.7714 \\text{ kJ/(kg}\\cdot\\text{K)}$. Determine exit quality $x_{2s} = \\frac{s_{2s} - s_f}{s_{fg}} = \\frac{6.7714 - 0.6492}{7.4996} = \\frac{6.1222}{7.4996} = 0.8163$. Compute ideal enthalpy: $h_{2s} = h_f + x_{2s} h_{fg} = 191.8 + (0.8163)(2392.1) = 191.8 + 1952.7 = 2144.5 \\text{ kJ/kg}$. Ideal work per unit mass: $w_s = h_1 - h_{2s} = 3214.5 - 2144.5 = 1070.0 \\text{ kJ/kg}$. Ideal power output: $\\dot{W}_s = \\dot{m} w_s = 3.0 \\times 1070.0 = 3210.0 \\text{ kW} = 3.21 \\text{ MW}$. (b) Actual power output: $\\dot{W}_a = \\eta_t \\dot{W}_s = 0.88 \\times 3210.0 = 2824.8 \\text{ kW} = 2.825 \\text{ MW}$. (c) Actual enthalpy: $h_{2a} = h_1 - w_a = 3214.5 - 941.6 = 2272.9 \\text{ kJ/kg}$. Actual quality: $x_{2a} = \\frac{2272.9 - 191.8}{2392.1} = 0.8699$. Actual exit entropy: $s_{2a} = 0.6492 + (0.8699)(7.4996) = 0.6492 + 6.5239 = 7.1731 \\text{ kJ/(kg}\\cdot\\text{K)}$. Rate of entropy generation for adiabatic turbine: $\\dot{S}_{gen} = \\dot{m}(s_{2a} - s_1) = 3.0 \\times (7.1731 - 6.7714) = 3.0 \\times 0.4017 = 1.205 \\text{ kW/K}$."
+    },
+    {
+      "id": "q-12",
+      "number": 12,
+      "difficulty": "Hard",
+      "type": "Theory",
+      "question": "Discuss Ludwig Boltzmann's statistical entropy equation $S = k_B \\ln(\\Omega)$. How does this microscopic probabilistic formulation resolve the macroscopic arrow of time in thermodynamics?",
+      "answer": "In Boltzmann's formulation, $S = k_B \\ln(\\Omega)$, entropy $S$ is proportional to the natural logarithm of $\\Omega$, the thermodynamic multiplicity (number of accessible microscopic quantum states or microstates corresponding to the same macroscopic macrostate). Macroscopic equilibrium corresponds mathematically to the macrostate with the overwhelmingly largest number of microstates $\\Omega_{max}$. Natural spontaneous processes move from configurations of lower probability (fewer microstates) to configurations of maximum statistical probability (astronomically greater microstates). This provides a physical statistical explanation for why heat never spontaneously concentrates into mechanical work: while not prohibited by energy conservation, such backward transitions possess a probability approaching zero on macroscopic timescales."
+    },
+    {
+      "id": "q-13",
+      "number": 13,
+      "difficulty": "Hard",
+      "type": "Numerical",
+      "question": "Refrigerant-134a at $P_1 = 0.80 \\text{ MPa}$, $T_1 = 35^\\circ \\text{C}$ ($h_1 = 256.4 \\text{ kJ/kg}$, $s_1 = 0.8641 \\text{ kJ/(kg}\\cdot\\text{K)}$) is throttled adiabatically through an expansion valve down to $P_2 = 0.14 \\text{ MPa}$. The ambient dead-state temperature is $T_0 = 298.15 \\text{ K}$. At $0.14 \\text{ MPa}$, saturated properties are $h_f = 27.08 \\text{ kJ/kg}$, $h_{fg} = 212.44 \\text{ kJ/kg}$, $s_f = 0.1062 \\text{ kJ/(kg}\\cdot\\text{K)}$, and $s_{fg} = 0.8358 \\text{ kJ/(kg}\\cdot\\text{K)}$. Determine: (a) Final exit quality $x_2$, (b) Entropy generated per kilogram $s_{gen}$, and (c) Specific exergy destroyed $e_{dest}$ during the throttling process.",
+      "answer": "(a) An adiabatic throttling valve is isenthalpic: $h_2 = h_1 = 256.4 \\text{ kJ/kg}$. Calculate exit quality: $x_2 = \\frac{h_2 - h_f}{h_{fg}} = \\frac{256.4 - 27.08}{212.44} = \\frac{229.32}{212.44} = 1.079 \\implies$ since $h_2 > h_g$ ($239.52$), the fluid exits as superheated vapor at $T_2 \\approx -10^\\circ \\text{C}$ with actual $s_2 = 0.9446 \\text{ kJ/(kg}\\cdot\\text{K)}$. (b) Specific entropy generated: $s_{gen} = s_2 - s_1 = 0.9446 - 0.8641 = +0.0805 \\text{ kJ/(kg}\\cdot\\text{K)}$. (c) By the Gouy-Stodola theorem, specific exergy destroyed equals: $e_{dest} = T_0 s_{gen} = 298.15 \\text{ K} \\times 0.0805 \\text{ kJ/(kg}\\cdot\\text{K)} = 24.00 \\text{ kJ/kg}$."
+    }
+  ]
+}

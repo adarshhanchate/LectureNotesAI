@@ -1,0 +1,1527 @@
+/* LectureNotes AI — Study Book PDF Design System */
+
+@charset "UTF-8";
+
+/* ==========================================================================
+   1. Theme Variables & Base Palette (Pure Offline System Fonts)
+   ========================================================================== */
+:root {
+  --primary: #4f46e5;
+  --primary-dark: #3730a3;
+  --primary-light: #eef2ff;
+  --primary-border: #c7d2fe;
+  --accent: #818cf8;
+  --bg-card: #ffffff;
+  --bg-page: #f8fafc;
+  --text-main: #1e293b;
+  --text-muted: #64748b;
+  --border-light: #e2e8f0;
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "Consolas", "Courier New", Courier, monospace;
+}
+
+/* Emerald Theme */
+body.theme-emerald {
+  --primary: #059669;
+  --primary-dark: #065f46;
+  --primary-light: #ecfdf5;
+  --primary-border: #a7f3d0;
+  --accent: #10b981;
+}
+
+/* Sunset Theme */
+body.theme-sunset {
+  --primary: #ea580c;
+  --primary-dark: #9a3412;
+  --primary-light: #fff7ed;
+  --primary-border: #fed7aa;
+  --accent: #f97316;
+}
+
+/* Print-Friendly (Ink-Saving, High-Contrast Black & White / Grayscale) */
+body.theme-print-friendly {
+  --primary: #000000;
+  --primary-dark: #000000;
+  --primary-light: #ffffff;
+  --primary-border: #000000;
+  --accent: #333333;
+  --text-main: #000000;
+  --text-muted: #222222;
+  --border-light: #666666;
+  --bg-card: #ffffff;
+  --bg-page: #ffffff;
+}
+
+/* ==========================================================================
+   2. CSS Paged Media Configuration & Running Headers
+   ========================================================================== */
+@page {
+  size: A4 portrait;
+  margin: 20mm 15mm 20mm 15mm;
+  @top-left {
+    content: "LectureNotes AI Study Book";
+    font-family: var(--font-family);
+    font-size: 7.5pt;
+    color: var(--text-muted);
+    border-bottom: 0.5pt solid var(--border-light);
+    padding-bottom: 3px;
+  }
+  @top-center {
+    content: "";
+    border-bottom: 0.5pt solid var(--border-light);
+    padding-bottom: 3px;
+  }
+  @top-right {
+    content: string(doc-title, first);
+    font-family: var(--font-family);
+    font-size: 7.5pt;
+    color: var(--text-muted);
+    font-style: italic;
+    border-bottom: 0.5pt solid var(--border-light);
+    padding-bottom: 3px;
+  }
+  @bottom-left {
+    content: "Personal & Educational Use";
+    font-family: var(--font-family);
+    font-size: 7.5pt;
+    color: var(--text-muted);
+    border-top: 0.5pt solid var(--border-light);
+    padding-top: 3px;
+  }
+  @bottom-center {
+    content: "";
+    border-top: 0.5pt solid var(--border-light);
+    padding-top: 3px;
+  }
+  @bottom-right {
+    content: "Page " counter(page) " of " counter(pages);
+    font-family: var(--font-family);
+    font-size: 7.5pt;
+    font-weight: 600;
+    color: var(--text-muted);
+    border-top: 0.5pt solid var(--border-light);
+    padding-top: 3px;
+  }
+}
+
+@page cover-page {
+  margin: 0;
+  @top-left { content: none; border: none; }
+  @top-center { content: none; border: none; }
+  @top-right { content: none; border: none; }
+  @bottom-left { content: none; border: none; }
+  @bottom-center { content: none; border: none; }
+  @bottom-right { content: none; border: none; }
+}
+
+.cover-wrapper {
+  page: cover-page;
+  height: 297mm;
+  padding: 30mm 24mm;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: linear-gradient(145deg, var(--primary-light) 0%, #ffffff 60%, var(--primary-light) 100%);
+  color: var(--text-main);
+  break-after: page;
+  page-break-after: always;
+}
+
+body.theme-print-friendly .cover-wrapper {
+  background: #ffffff !important;
+  border: 3pt solid #000000;
+  margin: 15mm;
+  height: 267mm;
+  padding: 20mm;
+}
+
+/* ==========================================================================
+   3. Document Structure & PDF Bookmarks
+   ========================================================================== */
+body {
+  font-family: var(--font-family);
+  color: var(--text-main);
+  background-color: var(--bg-page);
+  line-height: 1.45;
+  font-size: 9.5pt;
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, h3, h4 {
+  color: var(--text-main);
+  margin-top: 0;
+  break-after: avoid;
+  page-break-after: avoid;
+}
+
+/* WeasyPrint PDF Bookmarks */
+h1 {
+  bookmark-level: 1;
+  bookmark-state: open;
+}
+h2 {
+  bookmark-level: 2;
+  bookmark-state: closed;
+}
+
+.page-break {
+  break-before: page;
+  page-break-before: always;
+}
+
+/* Anti-widow / orphan heading rules */
+.part-header,
+.concept-header,
+.example-header,
+.num-header,
+.toc-group-header,
+.ak-header {
+  break-after: avoid;
+  page-break-after: avoid;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+/* ==========================================================================
+   4. Cover Elements (Bold Hero Block, Stats Grid & Geometric Decoration)
+   ========================================================================== */
+.cover-top-band {
+  margin-bottom: 16px;
+}
+
+.cover-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.cover-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  background: var(--primary);
+  color: #ffffff;
+  font-size: 8.5pt;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  border-radius: 4px;
+}
+
+.cover-edition-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  font-size: 8pt;
+  font-weight: 700;
+  border: 1pt solid var(--primary-border);
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+body.theme-print-friendly .cover-badge {
+  background: #000000 !important;
+  color: #ffffff !important;
+}
+
+body.theme-print-friendly .cover-edition-badge {
+  background: #f0f0f0 !important;
+  color: #000000 !important;
+  border-color: #000000 !important;
+}
+
+.cover-title {
+  font-size: 27pt;
+  font-weight: 800;
+  line-height: 1.15;
+  color: var(--primary-dark);
+  margin: 6px 0 10px 0;
+  string-set: doc-title content();
+}
+
+body.theme-print-friendly .cover-title {
+  color: #000000 !important;
+}
+
+.cover-subtitle {
+  font-size: 10.5pt;
+  color: var(--text-muted);
+  font-weight: 400;
+  line-height: 1.4;
+  margin: 0 0 16px 0;
+}
+
+/* 4-Card Statistics Grid */
+.cover-stats-grid {
+  display: flex;
+  gap: 10px;
+  margin: 18px 0 18px 0;
+}
+
+.cover-stat-card {
+  flex: 1;
+  background: #ffffff;
+  border: 1pt solid var(--primary-border);
+  border-top: 3.5pt solid var(--primary);
+  border-radius: 6px;
+  padding: 10px 6px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+}
+
+.cover-stat-card.stat-highlight {
+  border-top-color: #f59e0b;
+  background: #fffdfa;
+}
+
+.stat-number {
+  font-size: 22pt;
+  font-weight: 800;
+  color: var(--primary-dark);
+  line-height: 1.05;
+}
+
+.cover-stat-card.stat-highlight .stat-number {
+  color: #b45309;
+}
+
+.stat-label {
+  font-size: 7.5pt;
+  font-weight: 700;
+  color: var(--text-main);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 4px;
+}
+
+.stat-sub {
+  font-size: 6.5pt;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+body.theme-print-friendly .cover-stat-card {
+  border: 1.5pt solid #000000 !important;
+  border-top: 3.5pt solid #000000 !important;
+  box-shadow: none !important;
+  background: #ffffff !important;
+}
+
+body.theme-print-friendly .stat-number {
+  color: #000000 !important;
+}
+
+.cover-metadata-container {
+  margin: 6px 0 14px 0;
+}
+
+.meta-grid {
+  background: var(--bg-card);
+  border: 1pt solid var(--primary-border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+body.theme-print-friendly .meta-grid {
+  border: 1.5pt solid #000000;
+  box-shadow: none;
+}
+
+.meta-row {
+  display: flex;
+  padding: 4px 0;
+  border-bottom: 0.5pt solid var(--border-light);
+  font-size: 8.5pt;
+}
+
+.meta-row:last-child {
+  border-bottom: none;
+}
+
+.meta-label {
+  width: 140px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.meta-val {
+  flex: 1;
+  font-weight: 500;
+}
+
+.theme-name-tag {
+  text-transform: capitalize;
+  font-weight: 600;
+}
+
+.cover-footer {
+  margin-top: 8px;
+}
+
+.footer-rule {
+  height: 0.8pt;
+  background: var(--border-light);
+  margin-bottom: 6px;
+}
+
+.footer-text {
+  font-size: 7.5pt;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* ==========================================================================
+   5. Table of Contents with Dotted Leaders & Dynamic Page Numbers
+   ========================================================================== */
+.toc-section {
+  padding-top: 10px;
+}
+
+.toc-title {
+  font-size: 18pt;
+  font-weight: 800;
+  color: var(--primary-dark);
+  border-bottom: 2pt solid var(--primary);
+  padding-bottom: 6px;
+  margin-bottom: 12px;
+}
+
+body.theme-print-friendly .toc-title {
+  color: #000000 !important;
+  border-bottom-color: #000000 !important;
+}
+
+.toc-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.toc-group-header {
+  font-size: 9.5pt;
+  font-weight: 700;
+  color: var(--primary-dark);
+  margin-top: 8px;
+  margin-bottom: 2px;
+  padding-bottom: 2px;
+  border-bottom: 1pt dashed var(--primary-border);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+}
+
+body.theme-print-friendly .toc-group-header {
+  color: #000000 !important;
+  border-bottom-color: #333333 !important;
+}
+
+.toc-group-chip {
+  display: inline-block;
+  font-size: 6.5pt;
+  font-weight: 800;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  margin-right: 6px;
+  letter-spacing: 0.5px;
+}
+
+.toc-group-header.toc-group-numericals .toc-group-chip {
+  background: #fef3c7;
+  color: #b45309;
+  border: 1pt solid #fcd34d;
+}
+
+body.theme-print-friendly .toc-group-chip {
+  background: #f0f0f0 !important;
+  color: #000000 !important;
+  border: 0.8pt solid #000000 !important;
+}
+
+body.theme-print-friendly .toc-group-header.toc-group-numericals .toc-group-chip {
+  background: #000000 !important;
+  color: #ffffff !important;
+}
+
+.toc-item {
+  margin: 1.5px 0;
+  font-size: 8.5pt;
+}
+
+.toc-item.sub-item {
+  padding-left: 12px;
+}
+
+.toc-link {
+  text-decoration: none;
+  color: var(--text-main);
+  display: block;
+}
+
+.toc-link:hover {
+  color: var(--primary);
+}
+
+/* CSS Paged Media Dotted Leaders & Page Counter */
+.toc-link::after {
+  content: leader('.') " " target-counter(attr(href), page);
+  float: right;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+body.theme-print-friendly .toc-link::after {
+  color: #000000 !important;
+}
+
+/* At a Glance Box filling bottom half of Index page */
+.toc-glance-card {
+  margin-top: 14px;
+  background: var(--bg-card);
+  border: 1pt solid var(--primary-border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+  break-inside: avoid;
+}
+
+body.theme-print-friendly .toc-glance-card {
+  border: 1.5pt solid #000000;
+  box-shadow: none;
+}
+
+.glance-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  padding-bottom: 4px;
+  border-bottom: 0.5pt solid var(--border-light);
+}
+
+.glance-chip {
+  background: var(--primary);
+  color: #ffffff;
+  font-size: 6.5pt;
+  font-weight: 800;
+  padding: 1px 5px;
+  border-radius: 3px;
+  letter-spacing: 0.5px;
+}
+
+body.theme-print-friendly .glance-chip {
+  background: #000000;
+}
+
+.glance-title {
+  font-size: 9pt;
+  font-weight: 700;
+  color: var(--primary-dark);
+  margin: 0;
+}
+
+body.theme-print-friendly .glance-title {
+  color: #000000;
+}
+
+.glance-grid {
+  display: flex;
+  gap: 12px;
+}
+
+.glance-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.glance-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 7.5pt;
+  line-height: 1.3;
+}
+
+.glance-num {
+  font-size: 7pt;
+  font-weight: 800;
+  color: var(--primary);
+  background: var(--primary-light);
+  border-radius: 3px;
+  padding: 1px 3px;
+  flex-shrink: 0;
+}
+
+body.theme-print-friendly .glance-num {
+  background: #f0f0f0;
+  color: #000000;
+}
+
+.glance-desc {
+  color: var(--text-main);
+}
+
+/* ==========================================================================
+   6. Part Headers & Cards
+   ========================================================================== */
+.book-part {
+  padding-top: 10px;
+}
+
+.part-header {
+  margin-bottom: 18px;
+  padding-bottom: 10px;
+  border-bottom: 2pt solid var(--primary);
+}
+
+body.theme-print-friendly .part-header {
+  border-bottom-color: #000000 !important;
+}
+
+.part-badge {
+  display: inline-block;
+  font-size: 8pt;
+  font-weight: 700;
+  color: #ffffff;
+  background: var(--primary);
+  padding: 2px 8px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+body.theme-print-friendly .part-badge {
+  background: #000000 !important;
+}
+
+.part-title {
+  font-size: 17pt;
+  font-weight: 800;
+  color: var(--primary-dark);
+  margin: 0 0 4px 0;
+}
+
+body.theme-print-friendly .part-title {
+  color: #000000 !important;
+}
+
+.part-desc {
+  font-size: 9pt;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* Concept Cards */
+.concept-card {
+  background: var(--bg-card);
+  border: 1pt solid var(--border-light);
+  border-left: 3.5pt solid var(--primary);
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+}
+
+body.theme-print-friendly .concept-card {
+  border: 1pt solid #333333;
+  border-left: 4pt solid #000000;
+  box-shadow: none;
+}
+
+.concept-header {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.concept-num {
+  font-size: 11pt;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+body.theme-print-friendly .concept-num {
+  color: #000000;
+}
+
+.concept-title {
+  font-size: 11.5pt;
+  font-weight: 700;
+  margin: 0;
+}
+
+.definition-box {
+  background: var(--primary-light);
+  border-left: 2pt solid var(--primary);
+  padding: 8px 12px;
+  margin-bottom: 10px;
+  border-radius: 0 4px 4px 0;
+}
+
+body.theme-print-friendly .definition-box {
+  background: #f1f5f9;
+  border-left-color: #000000;
+}
+
+.def-label {
+  font-size: 7.5pt;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--primary);
+  margin-bottom: 2px;
+}
+
+body.theme-print-friendly .def-label {
+  color: #000000;
+}
+
+.key-points-title {
+  font-weight: 700;
+  font-size: 8.5pt;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: 8px;
+  margin-bottom: 4px;
+}
+
+.key-points-list {
+  margin: 0 0 10px 0;
+  padding-left: 18px;
+}
+
+.key-points-list li {
+  margin-bottom: 3px;
+}
+
+/* Callouts */
+.callout-box {
+  border-radius: 5px;
+  padding: 10px 14px;
+  margin-top: 10px;
+  font-size: 8.5pt;
+  border-left: 3pt solid var(--primary);
+  background: var(--primary-light);
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.callout-title {
+  font-weight: 700;
+  margin-bottom: 3px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.callout-warning {
+  border-left-color: #f59e0b;
+  background: #fffbeb;
+  color: #92400e;
+}
+
+.callout-important {
+  border-left-color: #ef4444;
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+body.theme-print-friendly .callout-box {
+  background: #f8fafc !important;
+  border: 1pt solid #000000 !important;
+  border-left-width: 3pt !important;
+  color: #000000 !important;
+}
+
+/* Example Cards */
+.example-card {
+  background: var(--bg-card);
+  border: 1pt solid var(--border-light);
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+body.theme-print-friendly .example-card {
+  border: 1pt solid #000000;
+}
+
+.example-header {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.example-badge {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  font-weight: 700;
+  font-size: 8pt;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+body.theme-print-friendly .example-badge {
+  background: #000000;
+  color: #ffffff;
+}
+
+.example-title {
+  font-size: 11pt;
+  margin: 0;
+}
+
+.example-context {
+  margin-bottom: 8px;
+  font-size: 9pt;
+}
+
+.example-steps-title {
+  font-weight: 700;
+  font-size: 8.5pt;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.example-steps-list {
+  padding-left: 18px;
+  margin: 0 0 10px 0;
+}
+
+.example-steps-list li {
+  margin-bottom: 4px;
+}
+
+.example-takeaway {
+  background: var(--primary-light);
+  border-left: 2pt solid var(--primary);
+  padding: 6px 10px;
+  font-size: 8.5pt;
+  border-radius: 0 4px 4px 0;
+}
+
+body.theme-print-friendly .example-takeaway {
+  background: #f8fafc;
+  border-left-color: #000000;
+}
+
+/* ==========================================================================
+   7. Numerical Cards & Long Problem Handling
+   ========================================================================== */
+.numerical-card {
+  background: var(--bg-card);
+  border: 1.5pt solid var(--primary-border);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 18px;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+body.theme-print-friendly .numerical-card {
+  border: 1.5pt solid #000000;
+}
+
+/* Allow long numerical problems to flow across pages naturally without forcing a premature break */
+.numerical-card.long-problem {
+  break-inside: auto !important;
+  page-break-inside: auto !important;
+}
+
+/* Ensure numerical header, problem statement, and parameter grid stay together */
+.num-header,
+.num-statement,
+.num-io-grid {
+  break-after: avoid;
+  page-break-after: avoid;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+/* Prominent Continuation Marker for Long Numerical Problems spanning across pages */
+.num-continuation-header {
+  break-before: page !important;
+  page-break-before: always !important;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  margin: 0 0 14px 0;
+  background: var(--primary-light);
+  border: 1pt solid var(--primary-border);
+  border-left: 4pt solid var(--primary);
+  border-radius: 4px;
+}
+
+body.theme-print-friendly .num-continuation-header {
+  background: #f1f5f9 !important;
+  border: 1pt solid #000000 !important;
+  border-left: 4pt solid #000000 !important;
+}
+
+.cont-badge {
+  background: var(--primary);
+  color: #ffffff;
+  font-size: 8pt;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+body.theme-print-friendly .cont-badge {
+  background: #000000;
+  color: #ffffff;
+}
+
+.cont-title {
+  font-size: 9.5pt;
+  font-weight: 700;
+  color: var(--primary-dark);
+}
+
+body.theme-print-friendly .cont-title {
+  color: #000000;
+}
+
+.num-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.num-badge {
+  background: var(--primary);
+  color: #ffffff;
+  font-size: 8pt;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+body.theme-print-friendly .num-badge {
+  background: #000000;
+}
+
+.num-title {
+  font-size: 12pt;
+  margin: 0;
+}
+
+.num-section-label {
+  font-weight: 700;
+  font-size: 8.5pt;
+  text-transform: uppercase;
+  color: var(--primary-dark);
+  margin-bottom: 4px;
+}
+
+body.theme-print-friendly .num-section-label {
+  color: #000000;
+}
+
+.num-io-grid {
+  display: flex;
+  gap: 16px;
+  background: var(--primary-light);
+  border: 0.5pt solid var(--primary-border);
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin: 10px 0;
+}
+
+body.theme-print-friendly .num-io-grid {
+  background: #f8fafc;
+  border: 1pt solid #000000;
+}
+
+.num-given, .num-find {
+  flex: 1;
+}
+
+.num-sublabel {
+  font-weight: 700;
+  font-size: 8pt;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+body.theme-print-friendly .num-sublabel {
+  color: #000000;
+}
+
+.io-table {
+  width: 100%;
+  font-size: 8.5pt;
+  border-collapse: collapse;
+}
+
+.io-key {
+  font-weight: 600;
+  color: var(--text-main);
+  padding: 2px 6px 2px 0;
+}
+
+.io-val {
+  color: var(--primary-dark);
+  font-weight: 600;
+}
+
+body.theme-print-friendly .io-val {
+  color: #000000;
+}
+
+.find-content {
+  font-size: 8.5pt;
+  font-weight: 600;
+  color: var(--primary-dark);
+}
+
+body.theme-print-friendly .find-content {
+  color: #000000;
+}
+
+.formula-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.formula-chip {
+  background: #ffffff;
+  border: 0.5pt solid var(--primary-border);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+body.theme-print-friendly .formula-chip {
+  border: 1pt solid #000000;
+}
+
+.step-item {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+  break-inside: avoid !important;
+  page-break-inside: avoid !important;
+}
+
+.step-num-circle {
+  width: 20px;
+  height: 20px;
+  background: var(--primary);
+  color: #ffffff;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 20px;
+  font-size: 8pt;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+body.theme-print-friendly .step-num-circle {
+  background: #000000;
+}
+
+.step-content {
+  flex: 1;
+}
+
+.step-heading {
+  font-weight: 700;
+  font-size: 9pt;
+  color: var(--text-main);
+}
+
+.step-desc {
+  font-size: 8.5pt;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+body.theme-print-friendly .step-desc {
+  color: #222222;
+}
+
+.step-equation {
+  margin: 4px 0;
+}
+
+.final-answer-card {
+  background: var(--primary-light);
+  border: 1.5pt solid var(--primary);
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin-top: 12px;
+  break-inside: avoid !important;
+  page-break-inside: avoid !important;
+}
+
+body.theme-print-friendly .final-answer-card {
+  background: #ffffff;
+  border: 2pt solid #000000;
+}
+
+.final-answer-badge {
+  font-size: 8pt;
+  font-weight: 800;
+  color: var(--primary-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+
+body.theme-print-friendly .final-answer-badge {
+  color: #000000;
+}
+
+.final-answer-text {
+  font-weight: 700;
+  font-size: 9.5pt;
+  color: var(--primary-dark);
+}
+
+body.theme-print-friendly .final-answer-text {
+  color: #000000;
+}
+
+/* ==========================================================================
+   8. Summary & Formula Cheat Sheet Table
+   ========================================================================== */
+.summary-card {
+  background: var(--bg-card);
+  border: 1pt solid var(--border-light);
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+
+body.theme-print-friendly .summary-card {
+  border: 1pt solid #000000;
+}
+
+.summary-title {
+  font-size: 12pt;
+  color: var(--primary-dark);
+  margin-bottom: 8px;
+}
+
+body.theme-print-friendly .summary-title {
+  color: #000000;
+}
+
+.formula-sheet-title {
+  font-size: 12pt;
+  color: var(--primary-dark);
+  margin: 16px 0 8px 0;
+}
+
+body.theme-print-friendly .formula-sheet-title {
+  color: #000000;
+}
+
+.formula-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 8.5pt;
+  background: var(--bg-card);
+  border: 1pt solid var(--border-light);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+body.theme-print-friendly .formula-table {
+  border: 1.5pt solid #000000;
+}
+
+.formula-table th {
+  background: var(--primary);
+  color: #ffffff;
+  padding: 8px 10px;
+  text-align: left;
+  font-weight: 700;
+  font-size: 8.5pt;
+  border-bottom: 1pt solid var(--primary-dark);
+}
+
+body.theme-print-friendly .formula-table th {
+  background: #000000;
+  border-bottom: 1pt solid #000000;
+}
+
+.formula-table td {
+  padding: 8px 10px;
+  border-bottom: 0.5pt solid var(--border-light);
+  vertical-align: middle;
+}
+
+body.theme-print-friendly .formula-table td {
+  border-bottom: 0.5pt solid #666666;
+}
+
+.formula-table tr:last-child td {
+  border-bottom: none;
+}
+
+.f-name {
+  color: var(--text-main);
+}
+
+.f-units {
+  font-family: var(--font-family);
+  font-size: 8.5pt;
+  color: var(--text-muted);
+  font-weight: 500;
+  text-align: center;
+  background: none;
+}
+
+body.theme-print-friendly .f-units {
+  color: #222222 !important;
+}
+
+/* ==========================================================================
+   9. Question Bank & Answer Key
+   ========================================================================== */
+.question-tier {
+  margin-bottom: 18px;
+}
+
+.tier-banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 10pt;
+  margin-bottom: 10px;
+  break-after: avoid;
+  page-break-after: avoid;
+}
+
+.tier-easy {
+  background: #ecfdf5;
+  color: #065f46;
+  border-left: 3pt solid #10b981;
+}
+
+.tier-moderate {
+  background: #fffbeb;
+  color: #92400e;
+  border-left: 3pt solid #f59e0b;
+}
+
+.tier-hard {
+  background: #fef2f2;
+  color: #991b1b;
+  border-left: 3pt solid #ef4444;
+}
+
+body.theme-print-friendly .tier-banner {
+  background: #f1f5f9 !important;
+  color: #000000 !important;
+  border: 1pt solid #000000 !important;
+  border-left-width: 3pt !important;
+}
+
+.question-card {
+  background: var(--bg-card);
+  border: 0.5pt solid var(--border-light);
+  border-radius: 5px;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+body.theme-print-friendly .question-card {
+  border: 1pt solid #000000;
+}
+
+.q-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.q-number {
+  font-weight: 700;
+  font-size: 8.5pt;
+  color: var(--primary);
+}
+
+body.theme-print-friendly .q-number {
+  color: #000000;
+}
+
+.q-pill {
+  font-size: 7pt;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 1px 6px;
+  border-radius: 3px;
+}
+
+.q-pill-theory {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+.q-pill-numerical {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+body.theme-print-friendly .q-pill {
+  background: #e2e8f0 !important;
+  color: #000000 !important;
+}
+
+.q-diff {
+  font-size: 7pt;
+  font-weight: 600;
+}
+
+.diff-easy { color: #059669; }
+.diff-moderate { color: #d97706; }
+.diff-hard { color: #dc2626; }
+
+body.theme-print-friendly .q-diff {
+  color: #333333 !important;
+}
+
+.q-text {
+  font-size: 9pt;
+  line-height: 1.4;
+}
+
+/* Answer Key */
+.ak-header {
+  font-size: 14pt;
+  font-weight: 800;
+  color: var(--primary-dark);
+  border-bottom: 1.5pt solid var(--primary);
+  padding-bottom: 4px;
+  margin-bottom: 14px;
+}
+
+body.theme-print-friendly .ak-header {
+  color: #000000 !important;
+  border-bottom-color: #000000 !important;
+}
+
+.ak-item {
+  background: var(--bg-card);
+  border: 0.5pt solid var(--border-light);
+  border-left: 2.5pt solid var(--primary);
+  border-radius: 4px;
+  padding: 10px 14px;
+  margin-bottom: 10px;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+body.theme-print-friendly .ak-item {
+  border: 1pt solid #000000;
+  border-left-width: 3pt;
+}
+
+.ak-item-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.ak-item-num {
+  font-weight: 700;
+  font-size: 8.5pt;
+  color: var(--primary);
+}
+
+body.theme-print-friendly .ak-item-num {
+  color: #000000;
+}
+
+.ak-question-snippet {
+  font-size: 8pt;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  padding-bottom: 4px;
+  border-bottom: 0.5pt dashed var(--border-light);
+}
+
+.ak-answer-content {
+  font-size: 8.5pt;
+  line-height: 1.4;
+}
+
+/* ==========================================================================
+   10. Math SVG, Styled Text, Multi-line & Icon Styling
+   ========================================================================== */
+.math-svg-inline {
+  display: inline-block;
+  height: 1.15em;
+  width: auto;
+  vertical-align: -0.22em;
+  margin: 0 1px;
+}
+
+.math-svg-block {
+  display: inline-block;
+  vertical-align: middle;
+  height: auto;
+  max-height: 42pt;
+  width: auto;
+  max-width: 100%;
+}
+
+.math-styled-text {
+  font-family: var(--font-family);
+  font-style: italic;
+  font-weight: 500;
+  display: inline;
+  white-space: nowrap;
+}
+
+.math-styled-text sub,
+.math-styled-text sup {
+  font-style: normal;
+  font-size: 0.75em;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+.math-styled-text sub {
+  bottom: -0.25em;
+}
+
+.math-styled-text sup {
+  top: -0.45em;
+}
+
+/* Multi-line Equations */
+.math-multiline-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 8px 0;
+  align-items: center;
+}
+
+.math-multiline-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+/* Formula Table Display Consistency */
+.formula-table td.f-math {
+  text-align: center;
+  vertical-align: middle;
+  padding: 8px 10px;
+}
+
+.formula-table td.f-math .math-svg-block,
+.formula-table td.f-math .math-svg-inline {
+  display: inline-block;
+  vertical-align: middle;
+  height: auto;
+  max-height: 28pt;
+  width: auto;
+}
+
+/* Plain Unicode / HTML Fallback */
+.math-unicode-inline {
+  font-family: var(--font-family);
+  font-size: 9pt;
+  font-style: italic;
+}
+
+.math-unicode-block {
+  display: block;
+  font-family: var(--font-family);
+  font-size: 9.5pt;
+  font-weight: 600;
+  background: var(--primary-light);
+  border-left: 2.5pt solid var(--primary);
+  padding: 6px 12px;
+  margin: 6px 0;
+  border-radius: 0 4px 4px 0;
+}
+
+body.theme-print-friendly .math-unicode-block {
+  background: #f1f5f9 !important;
+  color: #000000 !important;
+  border-left-color: #000000 !important;
+}
+
+/* SVG Icons for Callouts & Difficulty Banners */
+.callout-icon-svg {
+  width: 15px;
+  height: 15px;
+  display: inline-block;
+  vertical-align: -2px;
+  margin-right: 6px;
+}
+
+.tier-icon-svg {
+  width: 11px;
+  height: 11px;
+  display: inline-block;
+  vertical-align: -1px;
+  margin-right: 6px;
+}
+
+/* ==========================================================================
+   11. Demo Watermark Overlay
+   ========================================================================== */
+.demo-watermark-overlay {
+  position: fixed;
+  top: 40%;
+  left: 10%;
+  width: 80%;
+  font-size: 64pt;
+  font-weight: 900;
+  color: rgba(220, 38, 38, 0.12);
+  transform: rotate(-35deg);
+  text-align: center;
+  pointer-events: none;
+  z-index: 9999;
+  letter-spacing: 4px;
+}
+
+.demo-banner {
+  background: #fee2e2;
+  border: 1pt solid #ef4444;
+  color: #991b1b;
+  font-size: 8pt;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+  text-align: center;
+  letter-spacing: 0.5px;
+}

@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ title }} — Study Book</title>
+  <link rel="stylesheet" href="{{ css_path }}">
+</head>
+<body class="theme-{{ theme|default('indigo') }}">
+
+  {% if is_demo %}
+  <div class="demo-watermark-overlay">DEMO DATA</div>
+  {% endif %}
+
+  <!-- =========================================================================
+       1. COVER PAGE (Modern Hero Layout with Stats & Geometric Accents)
+       ========================================================================= -->
+  <div class="cover-wrapper">
+    <div class="cover-top-band">
+      {% if is_demo %}
+      <div class="demo-banner">⚠️ DEMO DATA — SYNTHETIC LECTURE PREVIEW</div>
+      {% endif %}
+
+      <div class="cover-header">
+        <div class="cover-badge-row">
+          <span class="cover-badge">{{ subject|default('STEM Study Book') }}</span>
+          <span class="cover-edition-badge">Complete Master Notes</span>
+        </div>
+        <h1 class="cover-title">{{ title }}</h1>
+        <p class="cover-subtitle">Comprehensive Theory Foundations, Step-by-Step Worked Problems, Formula Cheat-Sheet &amp; Examination Question Bank</p>
+      </div>
+
+      <!-- Eye-Catching 4-Card Stats Row filling the cover -->
+      <div class="cover-stats-grid">
+        <div class="cover-stat-card">
+          <div class="stat-number">{{ concepts_and_definitions|length }}</div>
+          <div class="stat-label">Core Concepts</div>
+          <div class="stat-sub">Theories &amp; Laws</div>
+        </div>
+        <div class="cover-stat-card stat-highlight">
+          <div class="stat-number">{{ numericals|length }}</div>
+          <div class="stat-label">Worked Numericals</div>
+          <div class="stat-sub">Full Calculations</div>
+        </div>
+        <div class="cover-stat-card">
+          <div class="stat-number">{{ formula_sheet|length }}</div>
+          <div class="stat-label">Key Formulas</div>
+          <div class="stat-sub">Cheat-Sheet &amp; Units</div>
+        </div>
+        <div class="cover-stat-card">
+          <div class="stat-number">{{ questions|length }}</div>
+          <div class="stat-label">Exam Questions</div>
+          <div class="stat-sub">Easy &bull; Mod &bull; Hard</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Metadata Section with Geometric Accent -->
+    <div class="cover-metadata-container">
+      <div class="meta-grid">
+        <div class="meta-row">
+          <div class="meta-cell meta-label">Subject / Discipline:</div>
+          <div class="meta-cell meta-val">{{ subject|default('Applied Science & Engineering') }}</div>
+        </div>
+        <div class="meta-row">
+          <div class="meta-cell meta-label">Generation Date:</div>
+          <div class="meta-cell meta-val">{{ date }}</div>
+        </div>
+        {% if source %}
+        <div class="meta-row">
+          <div class="meta-cell meta-label">Source / Lecturer:</div>
+          <div class="meta-cell meta-val">{{ source }}</div>
+        </div>
+        {% endif %}
+        {% if duration_str %}
+        <div class="meta-row">
+          <div class="meta-cell meta-label">Lecture Duration:</div>
+          <div class="meta-cell meta-val">{{ duration_str }}</div>
+        </div>
+        {% endif %}
+        <div class="meta-row">
+          <div class="meta-cell meta-label">Theme Palette:</div>
+          <div class="meta-cell meta-val theme-name-tag">{{ theme|default('Indigo') }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cover-footer">
+      <div class="footer-rule"></div>
+      <div class="footer-text">
+        Generated automatically by <strong>LectureNotes AI</strong> &bull; Typeset via Matplotlib Math Engine &bull; WeasyPrint PDF
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       2. TABLE OF CONTENTS (With Group Chips, Dotted Leaders & At a Glance Box)
+       ========================================================================= -->
+  <div class="toc-section page-break">
+    <h2 class="toc-title">Table of Contents</h2>
+    
+    <ul class="toc-list">
+      <!-- Group 1: Concepts & Definitions -->
+      <li class="toc-group-header">
+        <span class="toc-group-chip chip-part1">PART 1</span>
+        <span class="toc-group-title">Concepts &amp; Definitions</span>
+      </li>
+      {% for topic in concepts_and_definitions %}
+      <li class="toc-item sub-item">
+        <a class="toc-link" href="#{{ topic.id }}">
+          <span class="toc-text">1.{{ loop.index }} {{ topic.title }}</span>
+        </a>
+      </li>
+      {% endfor %}
+
+      <!-- Group 2: Conceptual & Practical Examples -->
+      <li class="toc-group-header">
+        <span class="toc-group-chip chip-part2">PART 2</span>
+        <span class="toc-group-title">Worked Conceptual Examples</span>
+      </li>
+      {% for ex in examples %}
+      <li class="toc-item sub-item">
+        <a class="toc-link" href="#{{ ex.id }}">
+          <span class="toc-text">2.{{ loop.index }} {{ ex.title }}</span>
+        </a>
+      </li>
+      {% endfor %}
+
+      <!-- Group 3: Step-by-Step Numerical Solutions (VISUALLY DISTINCT) -->
+      <li class="toc-group-header toc-group-numericals">
+        <span class="toc-group-chip chip-numericals">NUMERICALS</span>
+        <span class="toc-group-title">Step-by-Step Worked Problems</span>
+      </li>
+      {% for num in numericals %}
+      <li class="toc-item sub-item">
+        <a class="toc-link" href="#{{ num.id }}">
+          <span class="toc-text">3.{{ loop.index }} {{ num.title }}</span>
+        </a>
+      </li>
+      {% endfor %}
+
+      <!-- Group 4: Summary & Key Formulas -->
+      <li class="toc-group-header">
+        <span class="toc-group-chip chip-part4">PART 4</span>
+        <span class="toc-group-title">Summary &amp; Key Formulas</span>
+      </li>
+      <li class="toc-item sub-item">
+        <a class="toc-link" href="#chapter-summary">
+          <span class="toc-text">4.1 Chapter Overview &amp; Key Takeaways</span>
+        </a>
+      </li>
+      <li class="toc-item sub-item">
+        <a class="toc-link" href="#formula-sheet">
+          <span class="toc-text">4.2 Formula &amp; Equation Cheat-Sheet</span>
+        </a>
+      </li>
+
+      <!-- Group 5: Examination Question Bank (last, with Easy/Mod/Hard) -->
+      <li class="toc-group-header">
+        <span class="toc-group-chip chip-part5">PART 5</span>
+        <span class="toc-group-title">Examination Question Bank &amp; Solutions</span>
+      </li>
+      <li class="toc-item sub-item">
+        <a class="toc-link" href="#questions-easy">
+          <span class="toc-text">5.1 Easy Level (Foundational Concepts)</span>
+        </a>
+      </li>
+      <li class="toc-item sub-item">
+        <a class="toc-link" href="#questions-moderate">
+          <span class="toc-text">5.2 Moderate Level (Analytical Problems)</span>
+        </a>
+      </li>
+      <li class="toc-item sub-item">
+        <a class="toc-link" href="#questions-hard">
+          <span class="toc-text">5.3 Hard Level (Advanced Multi-Step Analysis)</span>
+        </a>
+      </li>
+      <li class="toc-item sub-item">
+        <a class="toc-link" href="#answer-key">
+          <span class="toc-text">5.4 Comprehensive Solutions &amp; Answer Key</span>
+        </a>
+      </li>
+    </ul>
+
+    <!-- At a Glance Card filling bottom half of Index page -->
+    <div class="toc-glance-card">
+      <div class="glance-header">
+        <span class="glance-chip">STUDY GUIDE</span>
+        <span class="glance-title">Chapter at a Glance</span>
+      </div>
+      <div class="glance-grid">
+        <div class="glance-col">
+          <div class="glance-item">
+            <span class="glance-num">01</span>
+            <div class="glance-desc"><strong>Theory First:</strong> Master the {{ concepts_and_definitions|length }} core concept topics for state postulates and cycle limits.</div>
+          </div>
+          <div class="glance-item">
+            <span class="glance-num">02</span>
+            <div class="glance-desc"><strong>Worked Calculations:</strong> Study the {{ numericals|length }} numerical problems with explicit Given / Find tables and step-by-step arithmetic.</div>
+          </div>
+        </div>
+        <div class="glance-col">
+          <div class="glance-item">
+            <span class="glance-num">03</span>
+            <div class="glance-desc"><strong>Quick Revision:</strong> Utilize the Section 4.2 formula sheet with standard SI units before exams.</div>
+          </div>
+          <div class="glance-item">
+            <span class="glance-num">04</span>
+            <div class="glance-desc"><strong>Self-Assessment:</strong> Solve the {{ questions|length }} categorized questions with full solutions in Section 5.4.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       3. PART 1: CONCEPTS & DEFINITIONS
+       ========================================================================= -->
+  <div id="concepts-section" class="book-part page-break">
+    <div class="part-header">
+      <div class="part-badge">Part 1</div>
+      <h1 class="part-title">Concepts &amp; Definitions</h1>
+      <p class="part-desc">In-depth theoretical foundations, fundamental definitions, and governing laws.</p>
+    </div>
+
+    {% for topic in concepts_and_definitions %}
+    <div id="{{ topic.id }}" class="concept-card">
+      <div class="concept-header">
+        <span class="concept-num">1.{{ loop.index }}</span>
+        <h2 class="concept-title">{{ topic.title }}</h2>
+      </div>
+
+      {% if topic.definition %}
+      <div class="definition-box">
+        <div class="def-label">Definition:</div>
+        <div class="def-text">{{ topic.definition|render_math }}</div>
+      </div>
+      {% endif %}
+
+      <div class="concept-body">
+        <p>{{ topic.explanation|render_math }}</p>
+
+        {% if topic.key_points %}
+        <div class="key-points-title">Core Key Points:</div>
+        <ul class="key-points-list">
+          {% for point in topic.key_points %}
+          <li>{{ point|render_math }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+
+        {% if topic.latex %}
+        <div class="equation-container">
+          {{ topic.latex|render_latex_svg(block=True) }}
+        </div>
+        {% endif %}
+
+        {% if topic.callout %}
+        <div class="callout-box callout-{{ topic.callout.type|default('tip') }}">
+          <div class="callout-title">
+            <span class="callout-icon">
+              {% if topic.callout.type == 'warning' %}
+              <svg class="callout-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              {% elif topic.callout.type == 'important' %}
+              <svg class="callout-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              {% else %}
+              <svg class="callout-icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-7 7c0 2.5 1.5 4.5 3 6h8c1.5-1.5 3-3.5 3-6a7 7 0 0 0-7-7z"/></svg>
+              {% endif %}
+            </span>
+            {{ topic.callout.title }}
+          </div>
+          <div class="callout-text">{{ topic.callout.text|render_math }}</div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- =========================================================================
+       4. PART 2: WORKED EXAMPLES
+       ========================================================================= -->
+  <div id="examples-section" class="book-part page-break">
+    <div class="part-header">
+      <div class="part-badge">Part 2</div>
+      <h1 class="part-title">Worked Conceptual Examples</h1>
+      <p class="part-desc">Step-by-step practical and conceptual scenarios analyzing system transformations.</p>
+    </div>
+
+    {% for ex in examples %}
+    <div id="{{ ex.id }}" class="example-card">
+      <div class="example-header">
+        <span class="example-badge">Example 2.{{ loop.index }}</span>
+        <h2 class="example-title">{{ ex.title }}</h2>
+      </div>
+      <div class="example-context">
+        <strong>Scenario:</strong> {{ ex.context|render_math }}
+      </div>
+      <div class="example-steps-title">Analytical Steps:</div>
+      <ol class="example-steps-list">
+        {% for step in ex.steps %}
+        <li>{{ step|render_math }}</li>
+        {% endfor %}
+      </ol>
+      {% if ex.takeaway %}
+      <div class="example-takeaway">
+        <strong>Key Takeaway:</strong> {{ ex.takeaway|render_math }}
+      </div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- =========================================================================
+       5. PART 3: NUMERICAL PROBLEM CARDS
+       ========================================================================= -->
+  <div id="numericals-section" class="book-part page-break">
+    <div class="part-header">
+      <div class="part-badge">Part 3</div>
+      <h1 class="part-title">Step-by-Step Numerical Solutions</h1>
+      <p class="part-desc">Fully structured calculation cards: Problem, Given, Find, Formulas, Calculations, and Boxed Answers.</p>
+    </div>
+
+    {% for num in numericals %}
+    {% set num_idx = loop.index %}
+    <div id="{{ num.id }}" class="numerical-card {% if num.is_long %}long-problem{% endif %}">
+      <div class="num-header">
+        <span class="num-badge">Problem 3.{{ num_idx }}</span>
+        <h2 class="num-title">{{ num.title }}</h2>
+      </div>
+
+      <div class="num-statement">
+        <div class="num-section-label">Problem Statement:</div>
+        <p>{{ num.problem|render_math }}</p>
+      </div>
+
+      <div class="num-io-grid">
+        <div class="num-given">
+          <div class="num-sublabel">Given Parameters:</div>
+          <table class="io-table">
+            {% for k, v in num.given.items() %}
+            <tr>
+              <td class="io-key">{{ k|clean_label }}</td>
+              <td class="io-val">{{ v|clean_label|render_math }}</td>
+            </tr>
+            {% endfor %}
+          </table>
+        </div>
+
+        <div class="num-find">
+          <div class="num-sublabel">Find / Compute:</div>
+          <div class="find-content">{{ num.find|clean_label|render_math }}</div>
+        </div>
+      </div>
+
+      {% if num.formulas_used %}
+      <div class="num-formulas">
+        <div class="num-sublabel">Governing Formulae:</div>
+        <div class="formula-chips">
+          {% for f in num.formulas_used %}
+          <div class="formula-chip">{{ f|render_latex_svg(block=False) }}</div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      <div class="num-solution">
+        <div class="num-section-label">Step-by-Step Calculation:</div>
+        {% for step in num.solution_steps %}
+        {% if num.is_long and loop.index == 5 %}
+        <div class="num-continuation-header">
+          <span class="cont-badge">Problem 3.{{ num_idx }} (Continued)</span>
+          <span class="cont-title">{{ num.title }} &mdash; Detailed Calculation Continued</span>
+        </div>
+        {% endif %}
+        <div class="step-item">
+          <div class="step-num-circle">{{ step.step_num }}</div>
+          <div class="step-content">
+            <div class="step-heading">{{ step.title }}</div>
+            <div class="step-desc">{{ step.description|render_math }}</div>
+            {% if step.math %}
+            <div class="step-equation">
+              {{ step.math|render_latex_svg(block=True) }}
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="final-answer-card">
+        <div class="final-answer-badge">FINAL ANSWER</div>
+        <div class="final-answer-text">{{ num.final_answer|render_math }}</div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- =========================================================================
+       6. PART 4: SUMMARY & KEY FORMULAS
+       ========================================================================= -->
+  <div id="summary-section" class="book-part page-break">
+    <div class="part-header">
+      <div class="part-badge">Part 4</div>
+      <h1 class="part-title">Summary &amp; Key Formulas</h1>
+      <p class="part-desc">Executive takeaways and quick-reference formula cheat-sheet with units.</p>
+    </div>
+
+    <div id="chapter-summary" class="summary-card">
+      <h2 class="summary-title">4.1 Chapter Overview &amp; Key Takeaways</h2>
+      <p class="summary-text">{{ summary|render_math }}</p>
+    </div>
+
+    {% if formula_sheet %}
+    <div id="formula-sheet" class="formula-sheet-container">
+      <h2 class="formula-sheet-title">4.2 Formula &amp; Equation Cheat-Sheet</h2>
+      <table class="formula-table">
+        <thead>
+          <tr>
+            <th style="width: 25%;">Law / Relationship</th>
+            <th style="width: 35%;">Equation</th>
+            <th style="width: 26%;">Description</th>
+            <th style="width: 14%;">Units</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for f in formula_sheet %}
+          <tr>
+            <td class="f-name"><strong>{{ f.name|clean_label }}</strong></td>
+            <td class="f-math">{{ f.latex|render_latex_svg(block=False) }}</td>
+            <td class="f-desc">{{ f.description|render_math }}</td>
+            <td class="f-units">{{ f.units|default('—') }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- =========================================================================
+       7. PART 5: EXAMINATION QUESTION BANK & SOLUTIONS
+       ========================================================================= -->
+  <div id="questions-section" class="book-part page-break">
+    <div class="part-header">
+      <div class="part-badge">Part 5</div>
+      <h1 class="part-title">Examination Question Bank</h1>
+      <p class="part-desc">Comprehensive test questions categorized by Easy, Moderate, and Hard levels with full solutions.</p>
+    </div>
+
+    <!-- 5.1 Easy Level -->
+    <div id="questions-easy" class="question-tier">
+      <div class="tier-banner tier-easy">
+        <span class="tier-icon">
+          <svg class="tier-icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#10b981"/></svg>
+        </span>
+        <span class="tier-title">5.1 Easy Level (Foundational Concepts)</span>
+      </div>
+      <div class="tier-questions">
+        {% for q in questions if q.difficulty == 'Easy' %}
+        <div class="question-card">
+          <div class="q-meta">
+            <span class="q-number">Q{{ q.number }}</span>
+            <span class="q-pill q-pill-{{ q.type|lower }}">{{ q.type }}</span>
+            <span class="q-diff diff-easy">Easy</span>
+          </div>
+          <div class="q-text">{{ q.question|render_math }}</div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- 5.2 Moderate Level -->
+    <div id="questions-moderate" class="question-tier">
+      <div class="tier-banner tier-moderate">
+        <span class="tier-icon">
+          <svg class="tier-icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#f59e0b"/></svg>
+        </span>
+        <span class="tier-title">5.2 Moderate Level (Analytical Problems)</span>
+      </div>
+      <div class="tier-questions">
+        {% for q in questions if q.difficulty == 'Moderate' %}
+        <div class="question-card">
+          <div class="q-meta">
+            <span class="q-number">Q{{ q.number }}</span>
+            <span class="q-pill q-pill-{{ q.type|lower }}">{{ q.type }}</span>
+            <span class="q-diff diff-moderate">Moderate</span>
+          </div>
+          <div class="q-text">{{ q.question|render_math }}</div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- 5.3 Hard Level -->
+    <div id="questions-hard" class="question-tier">
+      <div class="tier-banner tier-hard">
+        <span class="tier-icon">
+          <svg class="tier-icon-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#ef4444"/></svg>
+        </span>
+        <span class="tier-title">5.3 Hard Level (Advanced Multi-Step Analysis)</span>
+      </div>
+      <div class="tier-questions">
+        {% for q in questions if q.difficulty == 'Hard' %}
+        <div class="question-card">
+          <div class="q-meta">
+            <span class="q-number">Q{{ q.number }}</span>
+            <span class="q-pill q-pill-{{ q.type|lower }}">{{ q.type }}</span>
+            <span class="q-diff diff-hard">Hard</span>
+          </div>
+          <div class="q-text">{{ q.question|render_math }}</div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- 5.4 Complete Answer Key & Explanations -->
+    <div id="answer-key" class="answer-key-section page-break">
+      <h2 class="ak-header">5.4 Comprehensive Solutions &amp; Answer Key</h2>
+      <div class="ak-list">
+        {% for q in questions %}
+        <div class="ak-item">
+          <div class="ak-item-header">
+            <span class="ak-item-num">Solution {{ q.number }}</span>
+            <span class="q-pill q-pill-{{ q.type|lower }}">{{ q.type }}</span>
+            <span class="q-diff diff-{{ q.difficulty|lower }}">{{ q.difficulty }}</span>
+          </div>
+          <div class="ak-question-snippet"><em>{{ q.question|render_math }}</em></div>
+          <div class="ak-answer-content">
+            <strong>Solution:</strong> {{ q.answer|render_math }}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

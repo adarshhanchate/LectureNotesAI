@@ -1,0 +1,36 @@
+{
+  "gemini": {
+    "timings": {
+      "Audio Extraction": 0.46506285667419434,
+      "Transcription (STT)": 133.97534942626953,
+      "Transcript Cleaning": 0.004085540771484375,
+      "LLM Structuring": 16.23659634590149,
+      "Question Generation": 42.570876359939575,
+      "PDF Generation": 3.946754217147827,
+      "Total Pipeline": 197.1987247467041
+    },
+    "pdf": "C:\\Users\\ashan\\Documents\\NLP mini project\\temp\\run_gemini_1792627189\\study_book_gemini.pdf",
+    "screenshots": {
+      "index": "C:\\Users\\ashan\\.gemini\\antigravity-ide\\brain\\0957641c-3107-49a3-a864-67d3c6aeeee4\\screenshots\\gemini_index_p2.png",
+      "numerical": "C:\\Users\\ashan\\.gemini\\antigravity-ide\\brain\\0957641c-3107-49a3-a864-67d3c6aeeee4\\screenshots\\gemini_numerical_p4.png",
+      "questions": "C:\\Users\\ashan\\.gemini\\antigravity-ide\\brain\\0957641c-3107-49a3-a864-67d3c6aeeee4\\screenshots\\gemini_questions_p7.png"
+    }
+  },
+  "ollama": {
+    "timings": {
+      "Audio Extraction": 0.5314278602600098,
+      "Transcription (STT)": 0.030112028121948242,
+      "Transcript Cleaning": 0.0015785694122314453,
+      "LLM Structuring": 400.3374991416931,
+      "Question Generation": 305.44153904914856,
+      "PDF Generation": 3.6765849590301514,
+      "Total Pipeline": 710.018741607666
+    },
+    "pdf": "C:\\Users\\ashan\\Documents\\NLP mini project\\temp\\run_ollama_1792627387\\study_book_ollama.pdf",
+    "screenshots": {
+      "index": "C:\\Users\\ashan\\.gemini\\antigravity-ide\\brain\\0957641c-3107-49a3-a864-67d3c6aeeee4\\screenshots\\ollama_index_p2.png",
+      "numerical": "C:\\Users\\ashan\\.gemini\\antigravity-ide\\brain\\0957641c-3107-49a3-a864-67d3c6aeeee4\\screenshots\\ollama_numerical_p4.png",
+      "questions": "C:\\Users\\ashan\\.gemini\\antigravity-ide\\brain\\0957641c-3107-49a3-a864-67d3c6aeeee4\\screenshots\\ollama_questions_p8.png"
+    }
+  }
+}

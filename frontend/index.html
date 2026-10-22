@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LectureNotes AI — Lecture to Notes Converter</title>
+    <meta name="description" content="Turn any lecture video into a structured study book PDF with an index, worked problems and an exam question bank.">
+    <!-- Local system font stack only — no external font requests -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- ═══════════ NAVBAR ═══════════ -->
+    <nav class="navbar" id="navbar" aria-label="Main Navigation">
+        <div class="nav-container">
+            <a href="#" class="nav-logo" id="nav-logo" aria-label="LectureNotes AI Home">
+                <span class="logo-mark">
+                    <!-- Inline SVG Logo: Book + Sound Wave -->
+                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M4 6.5C4 5.11929 5.11929 4 6.5 4H12C13.1046 4 14 4.89543 14 6V22C14 20.8954 13.1046 20 12 20H6.5C5.11929 20 4 21.1193 4 22.5V6.5Z" fill="url(#logo-grad-1)"/>
+                        <path d="M24 6.5C24 5.11929 22.8807 4 21.5 4H16C14.8954 4 14 4.89543 14 6V22C14 20.8954 14.8954 20 16 20H21.5C22.8807 20 24 21.1193 24 22.5V6.5Z" fill="url(#logo-grad-2)"/>
+                        <!-- Sound wave lines across center -->
+                        <line x1="8" y1="12" x2="8" y2="14" stroke="#FFFFFF" stroke-width="1.75" stroke-linecap="round"/>
+                        <line x1="11" y1="10" x2="11" y2="16" stroke="#FFFFFF" stroke-width="1.75" stroke-linecap="round"/>
+                        <line x1="17" y1="10" x2="17" y2="16" stroke="#FFFFFF" stroke-width="1.75" stroke-linecap="round"/>
+                        <line x1="20" y1="12" x2="20" y2="14" stroke="#FFFFFF" stroke-width="1.75" stroke-linecap="round"/>
+                        <defs>
+                            <linearGradient id="logo-grad-1" x1="4" y1="4" x2="14" y2="22" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#4F46E5"/>
+                                <stop stop-offset="1" stop-color="#3730A3"/>
+                            </linearGradient>
+                            <linearGradient id="logo-grad-2" x1="14" y1="4" x2="24" y2="22" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#6366F1"/>
+                                <stop stop-offset="1" stop-color="#4F46E5"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </span>
+                <span class="logo-text">LectureNotes<span class="logo-ai">AI</span></span>
+            </a>
+
+            <div class="nav-links" id="nav-links">
+                <a href="#hero" class="nav-link active">Home</a>
+                <a href="#how-it-works" class="nav-link">How it works</a>
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#faq" class="nav-link">FAQ</a>
+            </div>
+
+            <div class="nav-actions">
+                <!-- System Status Pill -->
+                <div class="system-status-pill status-ready" id="system-status-pill" tabindex="0" role="status" aria-label="System status">
+                    <span class="status-dot" id="status-dot"></span>
+                    <span class="status-text" id="status-text">Checking...</span>
+                    <div class="status-tooltip" id="status-tooltip">
+                        Connecting to backend...
+                    </div>
+                </div>
+
+                <!-- Theme Toggle Button -->
+                <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark/light mode" title="Toggle theme">
+                    <span class="theme-icon theme-icon-dark">🌙</span>
+                    <span class="theme-icon theme-icon-light">☀️</span>
+                </button>
+
+                <!-- Mobile Hamburger Menu -->
+                <button class="nav-hamburger" id="nav-hamburger" aria-label="Open mobile menu">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ═══════════ MAIN HERO & INPUT CONTAINER ═══════════ -->
+    <main>
+        <section class="hero" id="hero">
+            <div class="hero-bg" aria-hidden="true">
+                <div class="hero-orb hero-orb-1"></div>
+                <div class="hero-orb hero-orb-2"></div>
+            </div>
+
+            <div class="container">
+                <div class="hero-content">
+                    <div class="hero-badges">
+                        <span class="hero-badge">🔗 Link or upload</span>
+                        <span class="hero-badge">⚡ Free AI options</span>
+                        <span class="hero-badge">🔒 Private local mode</span>
+                    </div>
+                    <h1 class="hero-title">Lecture to Notes Converter</h1>
+                    <p class="hero-subtitle">Turn any lecture video into a structured study book PDF with an index, worked problems and a question bank.</p>
+                </div>
+
+                <!-- ═══════════ MAIN INPUT CARD ═══════════ -->
+                <div class="input-card" id="input-card">
+                    <!-- Setup Error Banner (Visible when API key is missing & demo off) -->
+                    <div class="setup-alert" id="setup-alert" style="display:none;" role="alert">
+                        <div class="setup-alert-content">
+                            <span class="setup-icon">⚠️</span>
+                            <div class="setup-text" id="setup-text">
+                                <strong>AI Setup Required:</strong> No API key configured. Please set <code>GEMINI_API_KEY</code> in <code>.env</code> or select <strong>Local (Ollama)</strong> in Advanced Options.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Input Tabs -->
+                    <div class="input-tabs" role="tablist">
+                        <button class="input-tab active" data-tab="link" id="tab-link" role="tab" aria-selected="true" aria-controls="content-link">
+                            <svg class="tab-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                            Paste Video Link
+                        </button>
+                        <button class="input-tab" data-tab="upload" id="tab-upload" role="tab" aria-selected="false" aria-controls="content-upload">
+                            <svg class="tab-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                            Upload File
+                        </button>
+                    </div>
+
+                    <!-- 1. Link Tab Content -->
+                    <div class="tab-content active" id="content-link" role="tabpanel" aria-labelledby="tab-link">
+                        <div class="input-group">
+                            <div class="input-wrapper">
+                                <input type="url" class="input-field" id="video-url"
+                                       placeholder="Paste YouTube, Vimeo or media video link here..."
+                                       autocomplete="off" aria-label="Lecture video link">
+                                <button type="button" class="btn-paste" id="btn-paste-url" title="Paste from clipboard" aria-label="Paste URL">
+                                    📋 Paste
+                                </button>
+                            </div>
+                            <button type="button" class="btn btn-primary btn-convert" id="btn-convert-link">
+                                <span class="btn-text">Generate Study Book</span>
+                                <span class="btn-icon">→</span>
+                            </button>
+                        </div>
+                        <div class="inline-error" id="link-error-text" style="display:none;" role="alert"></div>
+                    </div>
+
+                    <!-- 2. Upload Tab Content -->
+                    <div class="tab-content" id="content-upload" role="tabpanel" aria-labelledby="tab-upload">
+                        <div class="upload-zone" id="upload-zone" tabindex="0" role="button" aria-label="Upload lecture file">
+                            <div id="upload-prompt">
+                                <div class="upload-icon">
+                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m8 16 4-4 4 4"/></svg>
+                                </div>
+                                <div class="upload-text">
+                                    <strong>Drag &amp; drop</strong> your lecture file here, or <span class="upload-browse">Browse</span>
+                                </div>
+                                <div class="upload-formats">Supported: MP4, MKV, WebM, MOV, MP3, WAV, M4A (Up to 500 MB)</div>
+                                <button type="button" class="btn-sample-load" id="btn-load-sample" title="Click to test with tests/sample_5min_lecture.mp4">
+                                    📁 Load test lecture: <code>sample_5min_lecture.mp4</code>
+                                </button>
+                            </div>
+
+                            <div class="upload-selected" id="upload-selected" style="display:none;">
+                                <div class="file-info">
+                                    <span class="file-icon">🎬</span>
+                                    <span class="file-name" id="file-name">filename.mp4</span>
+                                    <span class="file-size" id="file-size">(0 MB)</span>
+                                    <button type="button" class="file-remove" id="file-remove" title="Remove file" aria-label="Remove selected file">✕</button>
+                                </div>
+                                <button type="button" class="btn btn-primary btn-convert" id="btn-convert-upload">
+                                    <span class="btn-text">Generate Study Book</span>
+                                    <span class="btn-icon">→</span>
+                                </button>
+                            </div>
+                            <input type="file" id="file-input" hidden accept=".mp4,.mkv,.webm,.mov,.mp3,.wav,.m4a,.ogg,.flac">
+                        </div>
+
+                        <!-- Real Upload Progress Bar -->
+                        <div class="upload-progress-box" id="upload-progress-box" style="display:none;">
+                            <div class="upload-progress-header">
+                                <span id="upload-progress-text">Uploading lecture... 0%</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" id="upload-progress-bar" style="width:0%"></div>
+                            </div>
+                        </div>
+
+                        <div class="inline-error" id="upload-error-text" style="display:none;" role="alert"></div>
+                    </div>
+
+                    <!-- 3. Collapsible: Lecture details (optional) -->
+                    <div class="accordion-item">
+                        <button type="button" class="accordion-toggle" id="details-toggle" aria-expanded="false" aria-controls="details-panel">
+                            <span class="accordion-title">
+                                <span class="accordion-icon">📝</span> Lecture details (optional)
+                            </span>
+                            <span class="accordion-arrow" aria-hidden="true">▼</span>
+                        </button>
+                        <div class="accordion-panel" id="details-panel">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="lecture-title" class="form-label">Lecture Title</label>
+                                    <input type="text" class="form-input" id="lecture-title" placeholder="e.g. Wumpus World & Knowledge-Based Agents">
+                                </div>
+                                <div class="form-group">
+                                    <label for="lecture-subject" class="form-label">Subject / Keywords</label>
+                                    <input type="text" class="form-input" id="lecture-subject" placeholder="e.g. Artificial Intelligence, Propositional Logic">
+                                </div>
+                                <div class="form-group full-width">
+                                    <label for="lecture-type" class="form-label">Lecture Type</label>
+                                    <select class="form-select" id="lecture-type">
+                                        <option value="auto" selected>Auto-detect (Recommended)</option>
+                                        <option value="stem">STEM Calculation (Focus on numerical derivations & formulas)</option>
+                                        <option value="conceptual">Conceptual-theory (Focus on definitions & architectural paradigms)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. Collapsible: Advanced options -->
+                    <div class="accordion-item">
+                        <button type="button" class="accordion-toggle" id="advanced-toggle" aria-expanded="false" aria-controls="advanced-panel">
+                            <span class="accordion-title">
+                                <span class="accordion-icon">⚙️</span> Advanced options (AI engine, theme, questions)
+                            </span>
+                            <span class="accordion-arrow" aria-hidden="true">▼</span>
+                        </button>
+                        <div class="accordion-panel" id="advanced-panel">
+                            <div class="settings-grid">
+                                <!-- AI Engine Selector -->
+                                <div class="setting-item">
+                                    <label class="setting-label">AI Engine</label>
+                                    <div class="setting-pills" id="engine-pills" role="radiogroup">
+                                        <button type="button" class="pill active" data-engine="gemini" role="radio" aria-checked="true">
+                                            Gemini (Cloud, Free)
+                                        </button>
+                                        <button type="button" class="pill" data-engine="ollama" role="radio" aria-checked="false">
+                                            Local (Ollama)
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Local Speed Mode (Only active when Ollama is selected) -->
+                                <div class="setting-item" id="local-model-group" style="display:none;">
+                                    <label class="setting-label">Local Model Speed</label>
+                                    <div class="setting-pills" id="fast-mode-pills" role="radiogroup">
+                                        <button type="button" class="pill active" data-fast="true" role="radio" aria-checked="true">
+                                            Fast Mode (3B)
+                                        </button>
+                                        <button type="button" class="pill" data-fast="false" role="radio" aria-checked="false">
+                                            Standard (7B)
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Whisper Model -->
+                                <div class="setting-item">
+                                    <label for="whisper-model-select" class="setting-label">Whisper Speech Model</label>
+                                    <select class="form-select" id="whisper-model-select">
+                                        <option value="tiny">Tiny (Fastest, ~1 GB RAM)</option>
+                                        <option value="base">Base (Balanced, ~1.2 GB RAM)</option>
+                                        <option value="small" selected>Small (Default, ~1.5 GB RAM)</option>
+                                        <option value="medium">Medium (Accurate, ~2.8 GB RAM)</option>
+                                    </select>
+                                </div>
+
+                                <!-- PDF Theme Swatches -->
+                                <div class="setting-item full-width">
+                                    <label class="setting-label">PDF Theme Palette</label>
+                                    <div class="swatches-grid" role="radiogroup" aria-label="PDF Theme Swatches">
+                                        <button type="button" class="swatch-btn active" data-theme="indigo" role="radio" aria-checked="true">
+                                            <span class="swatch-color swatch-indigo"></span>
+                                            <span class="swatch-name">Indigo</span>
+                                        </button>
+                                        <button type="button" class="swatch-btn" data-theme="emerald" role="radio" aria-checked="false">
+                                            <span class="swatch-color swatch-emerald"></span>
+                                            <span class="swatch-name">Emerald</span>
+                                        </button>
+                                        <button type="button" class="swatch-btn" data-theme="sunset" role="radio" aria-checked="false">
+                                            <span class="swatch-color swatch-sunset"></span>
+                                            <span class="swatch-name">Sunset</span>
+                                        </button>
+                                        <button type="button" class="swatch-btn" data-theme="print-friendly" role="radio" aria-checked="false">
+                                            <span class="swatch-color swatch-print"></span>
+                                            <span class="swatch-name">Print-Friendly</span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Question Count Slider -->
+                                <div class="setting-item full-width">
+                                    <div class="range-header">
+                                        <label for="question-count" class="setting-label">Question Bank Size</label>
+                                        <span class="range-val-badge" id="question-count-value">12 questions</span>
+                                    </div>
+                                    <input type="range" class="range-slider" id="question-count" min="3" max="30" value="12" step="1">
+                                </div>
+                            </div>
+
+                            <!-- Hardware Time Warning for Local Mode -->
+                            <div class="time-warning-box" id="time-warning-box" style="display:none;" role="note">
+                                ⏱️ <strong>Local Hardware Notice:</strong> Local mode on CPU can take 20+ minutes for long lectures. Consider the cloud engine (Gemini) for faster, free generation.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ═══════════ PROGRESS PANEL (Replaces input card during execution) ═══════════ -->
+                <div class="progress-card" id="progress-card" style="display:none;" aria-live="polite">
+                    <div class="progress-header">
+                        <div>
+                            <h2 class="progress-title" id="progress-title">Transforming Lecture into Study Book...</h2>
+                            <div class="chunk-badge" id="chunk-indicator" style="display:none;">Chunk 1 of 1</div>
+                        </div>
+                        <div class="progress-meta">
+                            <span class="progress-percent" id="progress-percent">0%</span>
+                            <span class="progress-elapsed" id="progress-elapsed">Elapsed: 0m 00s</span>
+                        </div>
+                    </div>
+
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="progress-bar" style="width:0%"></div>
+                    </div>
+
+                    <div class="progress-status-line">
+                        <span class="spinner-small" aria-hidden="true"></span>
+                        <span class="progress-stage-text" id="progress-stage">Initializing...</span>
+                    </div>
+
+                    <!-- Stage Stepper List -->
+                    <div class="stepper-list" role="list">
+                        <div class="stage-item" data-stage="downloading" role="listitem">
+                            <span class="stage-dot"></span>
+                            <span class="stage-label">Download</span>
+                        </div>
+                        <div class="stage-item" data-stage="extracting_audio" role="listitem">
+                            <span class="stage-dot"></span>
+                            <span class="stage-label">Extract Audio</span>
+                        </div>
+                        <div class="stage-item" data-stage="transcribing" role="listitem">
+                            <span class="stage-dot"></span>
+                            <span class="stage-label">Whisper STT</span>
+                        </div>
+                        <div class="stage-item" data-stage="cleaning" role="listitem">
+                            <span class="stage-dot"></span>
+                            <span class="stage-label">Chunking</span>
+                        </div>
+                        <div class="stage-item" data-stage="structuring_notes" role="listitem">
+                            <span class="stage-dot"></span>
+                            <span class="stage-label">Structuring Notes</span>
+                        </div>
+                        <div class="stage-item" data-stage="generating_questions" role="listitem">
+                            <span class="stage-dot"></span>
+                            <span class="stage-label">Exam Questions</span>
+                        </div>
+                        <div class="stage-item" data-stage="building_pdf" role="listitem">
+                            <span class="stage-dot"></span>
+                            <span class="stage-label">Building PDF</span>
+                        </div>
+                    </div>
+
+                    <!-- Progress Error Message Box (Shows if failed) -->
+                    <div class="progress-error-box" id="progress-error-box" style="display:none;" role="alert">
+                        <span class="error-icon">❌</span>
+                        <div class="error-content">
+                            <strong>Execution Interrupted:</strong>
+                            <p id="progress-error-text">An unexpected error occurred.</p>
+                        </div>
+                    </div>
+
+                    <!-- Control Buttons -->
+                    <div class="progress-controls">
+                        <button type="button" class="btn btn-secondary btn-sm" id="btn-cancel-job">
+                            <span>⏹</span> Cancel Job
+                        </button>
+                        <button type="button" class="btn btn-primary btn-sm" id="btn-resume-job" style="display:none;">
+                            <span>▶</span> Resume Job
+                        </button>
+                        <button type="button" class="btn btn-ghost btn-sm" id="btn-progress-transcript" style="display:none;">
+                            <span>👁️</span> View Live Transcript
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ═══════════ RESULT CARD (Shown upon successful completion) ═══════════ -->
+                <div class="result-card" id="result-card" style="display:none;">
+                    <div class="result-header">
+                        <div class="result-success-badge">
+                            <span class="success-icon">✓</span>
+                            <span>Conversion Complete</span>
+                        </div>
+                        <span class="demo-tag" id="demo-tag" style="display:none;">DEMO WATERMARKED</span>
+                    </div>
+
+                    <h2 class="result-title" id="result-lecture-title">Wumpus World & Knowledge-Based Agents</h2>
+
+                    <!-- Metrics Stats Grid -->
+                    <div class="result-stats-grid">
+                        <div class="stat-card">
+                            <span class="stat-icon">⏱️</span>
+                            <span class="stat-value" id="result-duration">-</span>
+                            <span class="stat-label">Duration</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-icon">📝</span>
+                            <span class="stat-value" id="result-words">-</span>
+                            <span class="stat-label">Words</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-icon">💡</span>
+                            <span class="stat-value" id="result-concepts">-</span>
+                            <span class="stat-label">Concepts</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-icon">🔍</span>
+                            <span class="stat-value" id="result-examples">-</span>
+                            <span class="stat-label">Examples</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-icon">🧮</span>
+                            <span class="stat-value" id="result-numericals">-</span>
+                            <span class="stat-label">Numericals</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-icon">📐</span>
+                            <span class="stat-value" id="result-formulas">-</span>
+                            <span class="stat-label">Formulas</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-icon">❓</span>
+                            <span class="stat-value" id="result-questions">-</span>
+                            <span class="stat-label">Questions</span>
+                        </div>
+                    </div>
+
+                    <!-- Result Action Buttons -->
+                    <div class="result-actions">
+                        <a class="btn btn-primary btn-download" id="btn-download-pdf" href="#" download>
+                            <span>📥</span> Download Study Book (PDF)
+                        </a>
+                        <button type="button" class="btn btn-secondary" id="btn-preview-pdf">
+                            <span>👁️</span> Preview PDF
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="btn-view-transcript">
+                            <span>📜</span> View Transcript
+                        </button>
+                        <a class="btn btn-ghost" id="btn-download-transcript" href="#" download>
+                            <span>📄</span> Download .txt
+                        </a>
+                        <button type="button" class="btn btn-ghost" id="btn-new-conversion">
+                            <span>🔄</span> Convert Another Lecture
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ═══════════ RECENT CONVERSIONS ═══════════ -->
+                <div class="recent-section" id="recent-section" style="display:none;">
+                    <div class="recent-header">
+                        <h3 class="recent-heading">Recent Conversions</h3>
+                        <span class="recent-sub">Saved locally in your browser. Files are kept on disk for 24 hours.</span>
+                    </div>
+                    <div class="recent-grid" id="recent-jobs-list">
+                        <!-- Populated by state.js / ui.js -->
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ═══════════ FEATURES SECTION ═══════════ -->
+        <section class="section features-section" id="features">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">Features</span>
+                    <h2 class="section-title">Engineered for Academic Rigor</h2>
+                    <p class="section-subtitle">Designed to produce publication-grade, self-contained study notes from spoken university lectures.</p>
+                </div>
+
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">🔗</div>
+                        <h3 class="feature-title">Link or File Input</h3>
+                        <p class="feature-desc">Provide direct YouTube or web video URLs, or drag-and-drop local MP4, MKV, WebM, MP3, or WAV files directly into the browser.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">🎙️</div>
+                        <h3 class="feature-title">Accurate Speech-to-Text</h3>
+                        <p class="feature-desc">Faster-Whisper on CPU with int8 quantization and VAD silence filtering extracts every technical definition with exact timestamps.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">📑</div>
+                        <h3 class="feature-title">Structured Notes with Index</h3>
+                        <p class="feature-desc">Dynamic Table of Contents with exact page-target numbering, chapter summaries, key takeaways, and definition callout cards.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">🧮</div>
+                        <h3 class="feature-title">Worked Problems in Their Own Section</h3>
+                        <p class="feature-desc">Calculation problems formatted with Given data, Target unknowns, clean math formulas, and step-by-step derivations.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">🎯</div>
+                        <h3 class="feature-title">Tiered Question Bank</h3>
+                        <p class="feature-desc">Examination questions tiered across Easy, Moderate, and Hard difficulties with both Theory and Numerical tags plus a complete answer key.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon">🔒</div>
+                        <h3 class="feature-title">Free &amp; Private Options</h3>
+                        <p class="feature-desc">Switch seamlessly between Google Gemini 2.0 Flash (free cloud tier) and Ollama local execution (zero data ever leaves your computer).</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════ HOW IT WORKS (3 STEPS) ═══════════ -->
+        <section class="section how-section" id="how-it-works">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">Workflow</span>
+                    <h2 class="section-title">How It Works in 3 Steps</h2>
+                    <p class="section-subtitle">From raw video to a bound study book in minutes.</p>
+                </div>
+
+                <div class="steps-grid">
+                    <div class="step-card">
+                        <div class="step-num">1</div>
+                        <div class="step-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                        </div>
+                        <h3 class="step-title">Add Your Lecture</h3>
+                        <p class="step-desc">Paste a link from YouTube or upload an audio/video recording. Optionally customize subject keywords and choose your PDF theme swatch.</p>
+                    </div>
+
+                    <div class="step-card">
+                        <div class="step-num">2</div>
+                        <div class="step-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4"/><path d="m16.2 7.8 2.9-2.9"/><path d="M18 12h4"/><path d="m16.2 16.2 2.9 2.9"/><path d="M12 18v4"/><path d="m4.9 19.1 2.9-2.9"/><path d="M2 12h4"/><path d="m4.9 4.9 2.9 2.9"/></svg>
+                        </div>
+                        <h3 class="step-title">AI Transcribes &amp; Structures</h3>
+                        <p class="step-desc">Whisper STT converts speech to text, while the AI models segment the content, isolate concepts, solve worked problems, and create an exam question bank.</p>
+                    </div>
+
+                    <div class="step-card">
+                        <div class="step-num">3</div>
+                        <div class="step-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        </div>
+                        <h3 class="step-title">Download Study Book PDF</h3>
+                        <p class="step-desc">Receive a publication-ready PDF with a clickable Table of Contents, crisp math formulas, and a comprehensive answer key ready for study or print.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════ FAQ SECTION ═══════════ -->
+        <section class="section faq-section" id="faq">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">FAQ</span>
+                    <h2 class="section-title">Frequently Asked Questions</h2>
+                </div>
+
+                <div class="faq-accordion">
+                    <details class="faq-item" id="faq-1">
+                        <summary class="faq-question">
+                            <span>Is it free?</span>
+                            <span class="faq-icon">+</span>
+                        </summary>
+                        <div class="faq-answer">
+                            <p>Yes, 100% free! You can use Google Gemini’s generous free cloud tier (up to 15 requests per minute with zero API cost) or run completely locally with Ollama without any subscriptions or external fees.</p>
+                        </div>
+                    </details>
+
+                    <details class="faq-item" id="faq-2">
+                        <summary class="faq-question">
+                            <span>Which AI engines are used?</span>
+                            <span class="faq-icon">+</span>
+                        </summary>
+                        <div class="faq-answer">
+                            <p>For cloud processing, we utilize Google Gemini (such as Gemini 2.0 Flash or Flash-Lite). For offline privacy, we connect directly to your local Ollama instance running Qwen 2.5 (3B for high speed or 7B for maximum depth).</p>
+                        </div>
+                    </details>
+
+                    <details class="faq-item" id="faq-3">
+                        <summary class="faq-question">
+                            <span>How long does it take?</span>
+                            <span class="faq-icon">+</span>
+                        </summary>
+                        <div class="faq-answer">
+                            <p>With cloud Gemini, a 1-hour lecture is typically transcribed, structured, and compiled into a study book in approximately 2 to 3 minutes. With local Ollama CPU inference on a laptop, a 5-minute video takes around 5 to 10 minutes depending on your CPU core count.</p>
+                        </div>
+                    </details>
+
+                    <details class="faq-item" id="faq-4">
+                        <summary class="faq-question">
+                            <span>What video sources work?</span>
+                            <span class="faq-icon">+</span>
+                        </summary>
+                        <div class="faq-answer">
+                            <p>You can paste video links from YouTube, Vimeo, educational portals, or direct MP4/WebM URLs. You can also upload files in MP4, MKV, WebM, MOV, MP3, WAV, or M4A format up to 500 MB.</p>
+                        </div>
+                    </details>
+
+                    <details class="faq-item" id="faq-5">
+                        <summary class="faq-question">
+                            <span>Will the PDF always be perfect?</span>
+                            <span class="faq-icon">+</span>
+                        </summary>
+                        <div class="faq-answer">
+                            <p>No AI system is infallible. While the speech-to-text and structuring are remarkably thorough, you should always review the generated notes and double-check mathematical calculations against your course syllabus before using them for exams.</p>
+                        </div>
+                    </details>
+
+                    <details class="faq-item" id="faq-6">
+                        <summary class="faq-question">
+                            <span>Is my data stored?</span>
+                            <span class="faq-icon">+</span>
+                        </summary>
+                        <div class="faq-answer">
+                            <p>All uploaded files and temporary audio are automatically deleted from the server after 24 hours. When using Local Mode with Ollama, no audio, transcripts, or notes ever leave your personal computer.</p>
+                        </div>
+                    </details>
+
+                    <details class="faq-item" id="faq-7">
+                        <summary class="faq-question">
+                            <span>Copyright and fair use</span>
+                            <span class="faq-icon">+</span>
+                        </summary>
+                        <div class="faq-answer">
+                            <p>LectureNotes AI is strictly intended for personal, educational, and research study purposes under fair use doctrine. Users are responsible for complying with video platform terms of service and respecting lecture copyright.</p>
+                        </div>
+                    </details>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ═══════════ MODALS ═══════════ -->
+    <!-- 1. PDF Preview Modal -->
+    <div class="modal-overlay" id="pdf-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="pdf-modal-title">
+        <div class="modal-card modal-lg">
+            <div class="modal-header">
+                <h3 class="modal-title" id="pdf-modal-title">Study Book PDF Preview</h3>
+                <div class="modal-actions">
+                    <a href="#" class="btn btn-sm btn-primary" id="pdf-modal-download" download>Download</a>
+                    <button type="button" class="modal-close" aria-label="Close modal">✕</button>
+                </div>
+            </div>
+            <div class="modal-body modal-iframe-body">
+                <iframe id="pdf-frame" src="" title="PDF Preview Frame"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Transcript Viewer Modal -->
+    <div class="modal-overlay" id="transcript-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="transcript-modal-title">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div>
+                    <h3 class="modal-title" id="transcript-modal-title">Lecture Transcript</h3>
+                    <span class="modal-sub">Timestamped segments with live search</span>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-sm btn-secondary" id="btn-copy-transcript">Copy All</button>
+                    <button type="button" class="modal-close" aria-label="Close modal">✕</button>
+                </div>
+            </div>
+            <div class="transcript-filter-bar">
+                <input type="search" id="transcript-search" class="form-input" placeholder="Search transcript keywords..." aria-label="Search transcript">
+            </div>
+            <div class="modal-body modal-scroll-body" id="transcript-content">
+                <div class="loading-spinner">Loading transcript segments...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════ FOOTER ═══════════ -->
+    <footer class="footer" id="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <span class="logo-text">LectureNotes<span class="logo-ai">AI</span></span>
+                    </div>
+                    <p class="footer-desc">Turn any lecture video into a structured study book PDF with an index, worked problems and an exam question bank.</p>
+                </div>
+                <div class="footer-links-col">
+                    <h4 class="footer-col-title">Navigation</h4>
+                    <a href="#hero" class="footer-link">Home</a>
+                    <a href="#how-it-works" class="footer-link">How it works</a>
+                    <a href="#features" class="footer-link">Features</a>
+                    <a href="#faq" class="footer-link">FAQ</a>
+                </div>
+                <div class="footer-links-col">
+                    <h4 class="footer-col-title">Legal &amp; Support</h4>
+                    <a href="#faq" class="footer-link">Privacy Policy</a>
+                    <a href="#faq" class="footer-link">Terms of Service</a>
+                    <a href="#faq" class="footer-link">Contact</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p class="footer-disclaimer">For personal and educational use only; respect video copyright and platform terms of service.</p>
+                <p class="footer-copy">&copy; 2026 LectureNotes AI. Powered by WeasyPrint, matplotlib.mathtext &amp; Faster-Whisper.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modular Vanilla JavaScript -->
+    <script src="js/api.js"></script>
+    <script src="js/state.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
